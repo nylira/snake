@@ -5,7 +5,12 @@ mousetrap = require('mousetrap')
 var mapX = 512
 var mapY = 512
 var gu = 16
-var direction = 's'
+
+// player variables
+var $direction = 's'
+var delay = 100
+var alarm = new Date()
+alarm.setTime(new Date().getTime() + delay)
 
 // setup stage
 var stage = new P.Stage(0xCCD0CC)
@@ -31,16 +36,19 @@ requestAnimationFrame(animate);
 function animate(){
   requestAnimationFrame(animate);
 
-  move(cube, direction)
   stayInBounds(cube)
 
+  // move once every delay
+  if(alarm.getTime() < new Date().getTime()) {
+    move(cube, $direction)
+    alarm.setTime(new Date().getTime() + delay)
+  }
 
-  console.log(cube.position.x, cube.position.y)
   renderer.render(stage)
 }
 
-function move(sprite, direction) {
-  switch(direction) {
+function move(sprite, dir) {
+  switch(dir) {
     case 'n': sprite.position.y -= gu; break
     case 's': sprite.position.y += gu; break
     case 'e': sprite.position.x -= gu; break
@@ -57,7 +65,6 @@ function stayInBounds(sprite) {
     move(sprite, 'x')
     sprite.position.y = mapY - gu
   }
-  
   if (sprite.position.x <= 0) {
     move(sprite, 'x')
     sprite.position.x = 0
@@ -68,7 +75,7 @@ function stayInBounds(sprite) {
 }
 
 // keybindings
-Mousetrap.bind(['up', 'w'], function() {direction = 'n'})
-Mousetrap.bind(['down','s'], function() {direction = 's'})
-Mousetrap.bind(['left','a'], function() {direction = 'e'})
-Mousetrap.bind(['right','d'], function() {direction = 'w'})
+Mousetrap.bind(['up', 'w'], function() {$direction = 'n'})
+Mousetrap.bind(['down','s'], function() {$direction = 's'})
+Mousetrap.bind(['left','a'], function() {$direction = 'e'})
+Mousetrap.bind(['right','d'], function() {$direction = 'w'})
