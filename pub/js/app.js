@@ -31,16 +31,39 @@ requestAnimationFrame(animate);
 function animate(){
   requestAnimationFrame(animate);
 
-  cubeMove(direction)
+  move(cube, direction)
+  stayInBounds(cube)
+
+
+  console.log(cube.position.x, cube.position.y)
   renderer.render(stage)
 }
 
-function cubeMove(direction) {
+function move(sprite, direction) {
   switch(direction) {
-    case 'n': cube.position.y -= gu; break
-    case 's': cube.position.y += gu; break
-    case 'e': cube.position.x -= gu; break
-    case 'w': cube.position.x += gu; break
+    case 'n': sprite.position.y -= gu; break
+    case 's': sprite.position.y += gu; break
+    case 'e': sprite.position.x -= gu; break
+    case 'w': sprite.position.x += gu; break
+    case 'x': break
+  }
+}
+
+function stayInBounds(sprite) {
+  if(sprite.position.y <= 0){
+    move(sprite, 'x')
+    sprite.position.y = 0
+  } else if (sprite.position.y >= mapY) {
+    move(sprite, 'x')
+    sprite.position.y = mapY - gu
+  }
+  
+  if (sprite.position.x <= 0) {
+    move(sprite, 'x')
+    sprite.position.x = 0
+  } else if (sprite.position.x >= mapX) {
+    move(sprite, 'x')
+    sprite.position.x = mapX - gu
   }
 }
 
