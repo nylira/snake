@@ -4,6 +4,8 @@ mousetrap = require('mousetrap')
 // globals
 var mapX = 512
 var mapY = 512
+var gu = 16
+var direction = 's'
 
 // setup stage
 var stage = new P.Stage(0xCCD0CC)
@@ -29,22 +31,21 @@ requestAnimationFrame(animate);
 function animate(){
   requestAnimationFrame(animate);
 
+  cubeMove(direction)
   renderer.render(stage)
 }
 
+function cubeMove(direction) {
+  switch(direction) {
+    case 'n': cube.position.y -= gu; break
+    case 's': cube.position.y += gu; break
+    case 'e': cube.position.x -= gu; break
+    case 'w': cube.position.x += gu; break
+  }
+}
+
 // keybindings
-Mousetrap.bind(['up', 'w'], function() {
-  cube.position.y -= 16
-})
-
-Mousetrap.bind(['down','s'], function() {
-  cube.position.y += 16
-})
-
-Mousetrap.bind(['left','a'], function() {
-  cube.position.x -= 16
-})
-
-Mousetrap.bind(['right','d'], function() {
-  cube.position.x += 16
-})
+Mousetrap.bind(['up', 'w'], function() {direction = 'n'})
+Mousetrap.bind(['down','s'], function() {direction = 's'})
+Mousetrap.bind(['left','a'], function() {direction = 'e'})
+Mousetrap.bind(['right','d'], function() {direction = 'w'})
