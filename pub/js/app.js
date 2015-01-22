@@ -31,6 +31,12 @@ var highScores
 
 // stage variables
 var stage, renderer
+
+// scenes
+var sceneGameWelcome
+var sceneGame
+var sceneGameOver
+
 var tileTexture, cubeTexture, redTexture, flowerTexture, tiles, cube, cube1, cube2
 
 function preload() {
@@ -48,6 +54,16 @@ function preload() {
   stage = new P.Stage(0xCCD0CC)
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
   document.getElementById('container').appendChild(renderer.view);
+
+  sceneGameWelcome = new P.DisplayObjectContainer()
+  sceneGame = new P.DisplayObjectContainer()
+  sceneGameOver = new P.DisplayObjectContainer()
+  stage.addChild(sceneGameWelcome)
+  stage.addChild(sceneGame)
+  stage.addChild(sceneGameOver)
+  sceneGameWelcome.visible = false
+  sceneGame.visible = true
+  sceneGameOver.visible = false
 
   // setup textures
   var pixelRatio = window.devicePixelRatio;
@@ -80,7 +96,7 @@ function init() {
   combokeys.bind(['space','x'], function() {snakeMovement = null})
 
   // setup bg
-  stage.addChild(tiles)
+  sceneGame.addChild(tiles)
 
   // setup flowers
   /*for(var i=0; i < 7; i++) {
@@ -103,7 +119,7 @@ function init() {
 
   // go!
   snake.push(cube)
-  stage.addChild(cube)
+  sceneGame.addChild(cube)
   snakeLengthMax = 1
 }
 
@@ -115,7 +131,7 @@ function update(){
 
   // spawn a random cube if one doesn't exist
   if (randomCube === null) {
-    randomCube = spawnRandomSprite(stage, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
+    randomCube = spawnRandomSprite(sceneGame, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
   }
 
   // if the snake is out of bounds, end the game
@@ -138,7 +154,7 @@ function update(){
   // if snake[0] collides with the randomcube
   if (randomCube !== null && snake[0].position.x == randomCube.position.x && snake[0].position.y == randomCube.position.y) {
     // remove randomCube's visibility
-    stage.removeChild(randomCube)
+    sceneGame.removeChild(randomCube)
     // destroy it
     randomCube = null
     // make our snake longer
@@ -147,7 +163,7 @@ function update(){
 
   // move once every REFRESH_RATE
   if(alarm.getTime() < new Date().getTime()) {
-    chainFlow(stage, snake, snakeLengthMax, snakeMovement, cubeTexture, GRID_UNIT)
+    chainFlow(sceneGame, snake, snakeLengthMax, snakeMovement, cubeTexture, GRID_UNIT)
     alarm.setTime(new Date().getTime() + REFRESH_RATE)
   }
   renderer.render(stage)
@@ -165,8 +181,8 @@ function resetGame() {
   // what happens after pressing play again
 
   // clear stuff from stage
-  for (var i=stage.children.length-1; i >= 0; i--) {
-    stage.removeChild(stage.children[i])
+  for (var i=sceneGame.children.length-1; i >= 0; i--) {
+    sceneGame.removeChild(sceneGame.children[i])
   }
 
   // clear stuff from memory
