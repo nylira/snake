@@ -53,21 +53,15 @@ function init() {
   stage.addChild(tiles)
 
   // setup initial snake
-  cube.position.x = 240
-  cube.position.y = 240
-  cube1.position.x = 240
-  cube1.position.y = 256
-  cube2.position.x = 240
-  cube2.position.y = 272
+  var initialPosition = randomPosition(mapX, mapY, gu)
+  cube.position.x = initialPosition[0]
+  cube.position.y = initialPosition[1]
+
   stage.addChild(cube)
-  stage.addChild(cube1)
-  stage.addChild(cube2)
 
   snake.push(cube)
-  snake.push(cube1)
-  snake.push(cube2)
 
-  maxSnakeLength = 3
+  maxSnakeLength = 1
 }
 
 function update(){
@@ -125,28 +119,21 @@ function move(dir) {
 }
 
 function spawnRandomSprite(sprite) {
-
   var positionsAreIllegal = true
   var spritePosition = randomPosition(mapX, mapY, gu)
 
   var illegalSpawnPositions = []
   _.map(snake, function(cube){
-    //console.log([cube.position.x, cube.position.y])
     illegalSpawnPositions.push([cube.position.x, cube.position.y])
   })
-
-  //console.log('spritePosition', spritePosition)
-  //console.log('illegalSpawnPositions: ', illegalSpawnPositions)
 
   while(positionsAreIllegal) {
     // if the random position chosen is one of the snake's positions
     if(_.some(illegalSpawnPositions, spritePosition)) {
       // try a new random position
       spritePosition = randomPosition(mapX, mapY, gu)
-      //console.log('the random sprite\'s position is illegal, trying again')
     } else {
       positionsAreIllegal = false
-      //console.log('spritePosition is legal: ', spritePosition)
     }
   }
 
@@ -154,7 +141,6 @@ function spawnRandomSprite(sprite) {
   sprite.position.y = spritePosition[1]
   stage.addChild(sprite)
   randomCube = sprite
-  //console.log("random sprite added at", sprite.position.x, sprite.position.y)
 }
 
 function spawnSprite(sprite, offsetX, offsetY){
