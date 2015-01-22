@@ -5,12 +5,16 @@ var _ = require('lodash')
 var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
 
+// helpers
+var randomPosition = require('./helpers/randomPosition')
+var stayInBounds = require('./helpers/stayInBounds')
+
 // constants
 var MAP_X = 1024
 var MAP_Y = 1024
 var GRID_UNIT = 32
 var GAME_OVER
-var DIRECTIONS = ['n', 's', 'e', 'w']
+var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
 
 // player variables
@@ -18,7 +22,7 @@ var snakeDirection = null
 var alarm = new Date()
 alarm.setTime(new Date().getTime() + REFRESH_RATE)
 var snake = []
-var maxSnakeLength
+var snakeLengthMax
 var randomCube = null
 
 // stage variables
@@ -88,7 +92,7 @@ function init() {
   // go!
   snake.push(cube)
   stage.addChild(cube)
-  maxSnakeLength = 1
+  snakeLengthMax = 1
 }
 
 function update(){
@@ -100,6 +104,11 @@ function update(){
   // spawn a random cube if one doesn't exist
   if (randomCube === null) {
     spawnRandomSprite(new P.Sprite(redTexture))
+  }
+
+  // if the snake is out of bounds, end the game
+  if (stayInBounds(snake[0], MAP_X, MAP_Y) !== true) {
+    endGame()
   }
 
   // find the location of the cube tail elements
@@ -121,7 +130,7 @@ function update(){
     // destroy it
     randomCube = null
     // make our snake longer
-    maxSnakeLength++
+    snakeLengthMax++
   }
 
   // move once every REFRESH_RATE
@@ -130,7 +139,8 @@ function update(){
     alarm.setTime(new Date().getTime() + REFRESH_RATE)
   }
 
-  stayInBounds(snake[0])
+    
+
   renderer.render(stage)
 }
 
@@ -181,7 +191,7 @@ function spawnSprite(sprite, offsetX, offsetY){
   snake.unshift(newCube)
 
   // remove the old cube if it's greater than max snake length
-  if(snake.length > maxSnakeLength) {
+  if(snake.length > snakeLengthMax) {
     var popped = snake.pop()
     stage.removeChild(popped)
   }
@@ -189,24 +199,6 @@ function spawnSprite(sprite, offsetX, offsetY){
   return newCube
 }
 
-function stayInBounds(sprite) {
-  if(sprite.position.y < 0 || sprite.position.y > MAP_Y) {
-    endGame()
-  }
-  if (sprite.position.x < 0 || sprite.position.x >= MAP_X) {
-    endGame()
-  }
-}
-
-function randomPosition(maxX, maxY, gridUnit) {
-  var rangeX = (maxX / gridUnit) - 1
-  var rangeY = (maxY / gridUnit) - 1
-
-  var randomPositionX = _.random(0, rangeX) * gridUnit
-  var randomPositionY = _.random(0, rangeY) * gridUnit
-
-  return [randomPositionX, randomPositionY]
-}
 
 function endGame() {
   // pause the game loop
@@ -234,6 +226,9 @@ function resetGame() {
 
   // remove elements from the snake
   snake = []
+
+  // show high score
+  console.log('Your Score: ', snakeLengthMax)
 
   startGame()
 }
