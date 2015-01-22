@@ -9,12 +9,13 @@ var combokeys = new Combokeys(document)
 var randomPosition = require('./helpers/randomPosition')
 var stayInBounds = require('./helpers/stayInBounds')
 var chainFlow = require('./helpers/chainFlow')
+var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 
 // constants
 var MAP_X = 1024
 var MAP_Y = 1024
 var GRID_UNIT = 32
-var GAME_OVER
+var GAME_PAUSED
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
 
@@ -109,13 +110,13 @@ function init() {
 
 function update(){
   // keep the game running if it isn't over
-  if(GAME_OVER !== true) {
+  if(GAME_PAUSED !== true) {
     requestAnimationFrame(update);
   }
 
   // spawn a random cube if one doesn't exist
   if (randomCube === null) {
-    spawnRandomSprite(new P.Sprite(redTexture))
+    randomCube = spawnRandomSprite(stage, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
   }
 
   // if the snake is out of bounds, end the game
@@ -153,35 +154,8 @@ function update(){
   renderer.render(stage)
 }
 
-function spawnRandomSprite(sprite) {
-  var positionsAreIllegal = true
-  var spritePosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
-
-  var illegalSpawnPositions = []
-  _.map(snake, function(cube){
-    illegalSpawnPositions.push([cube.position.x, cube.position.y])
-  })
-
-  while(positionsAreIllegal) {
-    // if the random position chosen is one of the snake's positions
-    if(_.some(illegalSpawnPositions, spritePosition)) {
-      // try a new random position
-      spritePosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
-    } else {
-      positionsAreIllegal = false
-    }
-  }
-
-  sprite.position.x = spritePosition[0]
-  sprite.position.y = spritePosition[1]
-  stage.addChild(sprite)
-  randomCube = sprite
-}
-
-
 function endGame() {
-  // pause the game loop
-  GAME_OVER = true
+  GAME_PAUSED = true
 
   // unbind the hotkeys
   combokeys.reset()
@@ -213,7 +187,7 @@ function resetGame() {
 }
 
 function startGame(){
-  GAME_OVER = false
+  GAME_PAUSED = false
   init()
   update()
 }
