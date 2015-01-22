@@ -1,5 +1,5 @@
 'use strict'
-// external
+// libraries
 var P = require('pixi.js')
 var _ = require('lodash')
 var Combokeys = require('combokeys')
@@ -11,12 +11,12 @@ var MAP_Y = 512
 var GRID_UNIT = 16
 var GAME_OVER
 var DIRECTIONS = ['n', 's', 'e', 'w']
+var REFRESH_RATE = 100//ms
 
 // player variables
-var $direction = null
-var refreshRate = 100//ms
+var snakeDirection = null
 var alarm = new Date()
-alarm.setTime(new Date().getTime() + refreshRate)
+alarm.setTime(new Date().getTime() + REFRESH_RATE)
 var snake = []
 var maxSnakeLength
 var randomCube = null
@@ -45,11 +45,11 @@ function preload() {
 
 function init() {
   // keybindings
-  combokeys.bind(['up', 'w'], function() {$direction = 'n'})
-  combokeys.bind(['down','s'], function() {$direction = 's'})
-  combokeys.bind(['left','a'], function() {$direction = 'e'})
-  combokeys.bind(['right','d'], function() {$direction = 'w'})
-  combokeys.bind(['space','x'], function() {$direction = 'x'})
+  combokeys.bind(['up', 'w'], function() {snakeDirection = 'n'})
+  combokeys.bind(['down','s'], function() {snakeDirection = 's'})
+  combokeys.bind(['left','a'], function() {snakeDirection = 'e'})
+  combokeys.bind(['right','d'], function() {snakeDirection = 'w'})
+  combokeys.bind(['space','x'], function() {snakeDirection = null})
   // setup bg
   stage.addChild(tiles)
 
@@ -60,7 +60,7 @@ function init() {
   cube.position.y = initialPosition[1]
 
   //randomize direction
-  $direction = _.head(_.shuffle(DIRECTIONS))
+  snakeDirection = _.head(_.shuffle(DIRECTIONS))
 
   // go!
   snake.push(cube)
@@ -88,7 +88,7 @@ function update(){
   // if snake[0] collides with itself
   if(_.some(snakeTailPositions, [snake[0].position.x, snake[0].position.y])) {
     // end the game
-    restartGame()
+    endGame()
   }
 
   // if snake[0] collides with the randomcube
@@ -101,10 +101,10 @@ function update(){
     maxSnakeLength++
   }
 
-  // move once every refreshRate
+  // move once every REFRESH_RATE
   if(alarm.getTime() < new Date().getTime()) {
-    move($direction)
-    alarm.setTime(new Date().getTime() + refreshRate)
+    move(snakeDirection)
+    alarm.setTime(new Date().getTime() + REFRESH_RATE)
   }
 
   stayInBounds(snake[0])
@@ -168,10 +168,10 @@ function spawnSprite(sprite, offsetX, offsetY){
 
 function stayInBounds(sprite) {
   if(sprite.position.y < 0 || sprite.position.y > MAP_Y) {
-    restartGame()
+    endGame()
   }
   if (sprite.position.x < 0 || sprite.position.x >= MAP_X) {
-    restartGame()
+    endGame()
   }
 }
 
@@ -185,24 +185,31 @@ function randomPosition(maxX, maxY, gridUnit) {
   return [randomPositionX, randomPositionY]
 }
 
-function restartGame() {
+function endGame() {
   // pause the game loop
   GAME_OVER = true
-  console.log('GAME OVER. Restarting...')
 
   // unbind the hotkeys
   combokeys.reset()
 
-  // remove the randomCube
-  randomCube = null
-
   // stop the snake from moving
-  $direction = 'x'
+  snakeDirection = null
+
+  console.log('GAME OVER. Restarting in 3 seconds...')
+
+  resetGame()
+}
+
+function resetGame() {
+  console.log('Game is resetting now!')
 
   // remove visual representation of snake
   for (var i=stage.children.length-1; i >= 0; i--) {
     stage.removeChild(stage.children[i])
   }
+
+  // remove the randomCube
+  randomCube = null
 
   // remove elements from the snake
   snake = []
