@@ -91,8 +91,8 @@ function init() {
   }*/
 
   // setup initial snake
-  // randomize position
-  var initialPosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
+  // randomize position in the middle 1/9 of map so player doesn't die instantly
+  var initialPosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT, 0.67)
   cube.position.x = initialPosition[0]
   cube.position.y = initialPosition[1]
 
