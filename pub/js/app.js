@@ -5,11 +5,12 @@ var _ = require('lodash')
 var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
 
-// globals
-var mapX = 512
-var mapY = 512
-var gu = 16
-var gameOver
+// constants
+var MAP_X = 512
+var MAP_Y = 512
+var GRID_UNIT = 16
+var GAME_OVER
+var DIRECTIONS = ['n', 's', 'e', 'w']
 
 // player variables
 var $direction = null
@@ -27,7 +28,7 @@ var tileTexture, cubeTexture, cubeTextureRed, tiles, cube, cube1, cube2
 function preload() {
   // setup stage
   stage = new P.Stage(0xCCD0CC)
-  renderer = P.autoDetectRenderer(mapX, mapY)
+  renderer = P.autoDetectRenderer(MAP_X, MAP_Y)
   document.body.appendChild(renderer.view);
 
   // setup textures
@@ -36,7 +37,7 @@ function preload() {
   cubeTextureRed = P.Texture.fromImage('../img/block16x16red.png')
 
   // setup sprites
-  tiles = new P.TilingSprite(tileTexture, mapX, mapX)
+  tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_X)
   cube = new P.Sprite(cubeTexture)
   cube1 = new P.Sprite(cubeTexture)
   cube2 = new P.Sprite(cubeTexture)
@@ -53,20 +54,23 @@ function init() {
   stage.addChild(tiles)
 
   // setup initial snake
-  var initialPosition = randomPosition(mapX, mapY, gu)
+  // randomize position
+  var initialPosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
   cube.position.x = initialPosition[0]
   cube.position.y = initialPosition[1]
 
-  stage.addChild(cube)
+  //randomize direction
+  $direction = _.head(_.shuffle(DIRECTIONS))
 
+  // go!
   snake.push(cube)
-
+  stage.addChild(cube)
   maxSnakeLength = 1
 }
 
 function update(){
   // keep the game running if it isn't over
-  if(gameOver !== true) {
+  if(GAME_OVER !== true) {
     requestAnimationFrame(update);
   }
 
@@ -110,17 +114,17 @@ function update(){
 function move(dir) {
   var sprite = new P.Sprite(cubeTexture)
   switch(dir) {
-    case 'n': spawnSprite(sprite, 0, -gu); break
-    case 's': spawnSprite(sprite, 0, gu); break
-    case 'e': spawnSprite(sprite, -gu, 0); break
-    case 'w': spawnSprite(sprite, gu, 0); break
+    case 'n': spawnSprite(sprite, 0, -GRID_UNIT); break
+    case 's': spawnSprite(sprite, 0, GRID_UNIT); break
+    case 'e': spawnSprite(sprite, -GRID_UNIT, 0); break
+    case 'w': spawnSprite(sprite, GRID_UNIT, 0); break
     default: break
   }
 }
 
 function spawnRandomSprite(sprite) {
   var positionsAreIllegal = true
-  var spritePosition = randomPosition(mapX, mapY, gu)
+  var spritePosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
 
   var illegalSpawnPositions = []
   _.map(snake, function(cube){
@@ -131,7 +135,7 @@ function spawnRandomSprite(sprite) {
     // if the random position chosen is one of the snake's positions
     if(_.some(illegalSpawnPositions, spritePosition)) {
       // try a new random position
-      spritePosition = randomPosition(mapX, mapY, gu)
+      spritePosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
     } else {
       positionsAreIllegal = false
     }
@@ -163,10 +167,10 @@ function spawnSprite(sprite, offsetX, offsetY){
 }
 
 function stayInBounds(sprite) {
-  if(sprite.position.y < 0 || sprite.position.y > mapY) {
+  if(sprite.position.y < 0 || sprite.position.y > MAP_Y) {
     restartGame()
   }
-  if (sprite.position.x < 0 || sprite.position.x >= mapX) {
+  if (sprite.position.x < 0 || sprite.position.x >= MAP_X) {
     restartGame()
   }
 }
@@ -183,7 +187,7 @@ function randomPosition(maxX, maxY, gridUnit) {
 
 function restartGame() {
   // pause the game loop
-  gameOver = true
+  GAME_OVER = true
   console.log('GAME OVER. Restarting...')
 
   // unbind the hotkeys
@@ -207,7 +211,7 @@ function restartGame() {
 }
 
 function startGame(){
-  gameOver = false
+  GAME_OVER = false
   init()
 }
 
