@@ -17,7 +17,7 @@ var refreshRate = 100//ms
 var alarm = new Date()
 alarm.setTime(new Date().getTime() + refreshRate)
 var cubes = []
-var randomCube
+var randomCube = null
 
 // stage variables
 var stage, renderer
@@ -71,7 +71,7 @@ function update(){
     requestAnimationFrame(update);
   }
 
-  if (typeof randomCube === 'undefined') {
+  if (randomCube === null) {
     spawnRandomSprite(new P.Sprite(cubeTextureRed))
   }
 
@@ -168,6 +168,9 @@ function restartGame() {
 
   // unbind the hotkeys
   combokeys.reset()
+
+  // remove the randomCube
+  randomCube = null
 
   // stop the snake from moving
   $direction = 'x'
