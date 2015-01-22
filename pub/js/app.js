@@ -8,7 +8,7 @@ var combokeys = new Combokeys(document)
 // helpers
 var randomPosition = require('./helpers/randomPosition')
 var stayInBounds = require('./helpers/stayInBounds')
-var spawnChainedSprite = require('./helpers/spawnChainedSprite')
+var chainFlow = require('./helpers/chainFlow')
 
 // constants
 var MAP_X = 1024
@@ -147,24 +147,10 @@ function update(){
 
   // move once every REFRESH_RATE
   if(alarm.getTime() < new Date().getTime()) {
-    move(snakeDirection)
+    chainFlow(stage, snake, snakeLengthMax, snakeDirection, cubeTexture, GRID_UNIT)
     alarm.setTime(new Date().getTime() + REFRESH_RATE)
   }
   renderer.render(stage)
-}
-
-function move(dir) {
-  var sprite = new P.Sprite(cubeTexture)
-  var offsetX = 0
-  var offsetY = 0
-  switch(dir) {
-    case 'n': offsetY = -GRID_UNIT; break
-    case 's': offsetY = GRID_UNIT; break
-    case 'e': offsetX = -GRID_UNIT; break
-    case 'w': offsetX = GRID_UNIT; break
-    default: break
-  }
-  spawnChainedSprite(stage, snake, snakeLengthMax, sprite, offsetX, offsetY)
 }
 
 function spawnRandomSprite(sprite) {
