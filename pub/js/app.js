@@ -241,8 +241,12 @@ function resetGame() {
 function startGame(){
   GAME_OVER = false
   init()
+  update()
 }
 
 preload()
-startGame()
-update()
+var playButton = document.getElementById('play-button')
+playButton.addEventListener('click', function() {
+  startGame()
+  playButton.style.display = 'none'
+})
