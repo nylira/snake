@@ -1,0 +1,29 @@
+{
+  "name": "game-snake",
+  "version": "0.0.1",
+  "description": "Snake. The game.",
+  "main": "server.js",
+  "dependencies": {
+    "combokeys": "^2.3.0",
+    "koa-static": "^1.4.8",
+    "pixi.js": "^2.2.3",
+    "browserify": "^8.1.1",
+    "koa": "^0.15.0",
+    "koa-router": "^3.8.0",
+    "watchify": "^2.2.1",
+    "uglify": "^0.1.1",
+    "stylus": "^0.49.3",
+    "nib": "^1.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@91.121.116.55:game-snake"
+  },
+  "author": "Peng Zhong",
+  "license": "Proprietary"
+}
