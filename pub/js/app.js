@@ -1,7 +1,8 @@
 'use strict'
 // external
 var P = require('pixi.js')
-var Combokeys = require("combokeys");
+var _ = require('lodash')
+var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
 
 // globals
@@ -16,10 +17,11 @@ var refreshRate = 100//ms
 var alarm = new Date()
 alarm.setTime(new Date().getTime() + refreshRate)
 var cubes = []
+var randomCube
 
 // stage variables
 var stage, renderer
-var tileTexture, cubeTexture, tiles, cube, cube1, cube2
+var tileTexture, cubeTexture, cubeTextureRed, tiles, cube, cube1, cube2
 
 function preload() {
   // setup stage
@@ -30,6 +32,7 @@ function preload() {
   // setup textures
   tileTexture = P.Texture.fromImage('../img/grid64x64.png')
   cubeTexture = P.Texture.fromImage('../img/block16x16.png')
+  cubeTextureRed = P.Texture.fromImage('../img/block16x16red.png')
 
   // setup sprites
   tiles = new P.TilingSprite(tileTexture, mapX, mapX)
@@ -68,6 +71,10 @@ function update(){
     requestAnimationFrame(update);
   }
 
+  if (typeof randomCube === 'undefined') {
+    spawnRandomSprite(new P.Sprite(cubeTextureRed))
+  }
+
   // move once every refreshRate
   if(alarm.getTime() < new Date().getTime()) {
     move($direction)
@@ -78,28 +85,59 @@ function update(){
 }
 
 function move(dir) {
-  var newCube
+  var sprite = new P.Sprite(cubeTexture)
   switch(dir) {
-    case 'n': 
-      newCube = spawnCube(0, -gu)
-      break
-    case 's':
-      newCube = spawnCube(0, gu)
-      break
-    case 'e':
-      newCube = spawnCube(-gu, 0)
-      break
-    case 'w':
-      newCube = spawnCube(gu, 0)
-      break
-    default:
-      break
+    case 'n': spawnSprite(sprite, 0, -gu); break
+    case 's': spawnSprite(sprite, 0, gu); break
+    case 'e': spawnSprite(sprite, -gu, 0); break
+    case 'w': spawnSprite(sprite, gu, 0); break
+    default: break
   }
 }
 
-function spawnCube(offsetX, offsetY){
+function spawnRandomSprite(sprite) {
+  var rangeX = (mapX / gu) - 1
+  var rangeY = (mapY / gu) - 1
+
+  var positionsAreIllegal = true
+  var randomPositionX = _.random(0, rangeX) * gu
+  var randomPositionY = _.random(0, rangeY) * gu
+  var randomPosition = [randomPositionX, randomPositionY]
+
+  var illegalSpawnPositions = []
+  _.map(cubes, function(cube){
+    //console.log([cube.position.x, cube.position.y])
+    illegalSpawnPositions.push([cube.position.x, cube.position.y])
+  })
+
+  //console.log('randomPosition', randomPosition)
+  //console.log('illegalSpawnPositions: ', illegalSpawnPositions)
+
+  while(positionsAreIllegal) {
+    // if the random position chosen is one of the snake's positions
+    if(_.some(illegalSpawnPositions, randomPosition)) {
+      randomPositionX = _.random(0, rangeX) * gu
+      randomPositionY = _.random(0, rangeY) * gu
+      // try a new random position
+      randomPosition = [randomPositionX, randomPositionY]
+      //console.log('the random sprite\'s position is illegal, trying again')
+    // else the random position is fine
+    } else {
+      positionsAreIllegal = false
+      //console.log('randomPosition is legal: ', randomPosition)
+    }
+  }
+
+  sprite.position.x = randomPosition[0]
+  sprite.position.y = randomPosition[1]
+  stage.addChild(sprite)
+  randomCube = sprite
+  //console.log("random sprite added at", sprite.position.x, sprite.position.y)
+}
+
+function spawnSprite(sprite, offsetX, offsetY){
   // set up new cube
-  var newCube = new P.Sprite(cubeTexture)
+  var newCube = sprite
   newCube.position.x = cubes[0].position.x + offsetX
   newCube.position.y = cubes[0].position.y + offsetY
 

@@ -4,16 +4,17 @@
   "description": "Snake. The game.",
   "main": "server.js",
   "dependencies": {
-    "combokeys": "^2.3.0",
-    "koa-static": "^1.4.8",
-    "pixi.js": "^2.2.3",
     "browserify": "^8.1.1",
+    "combokeys": "^2.3.0",
     "koa": "^0.15.0",
     "koa-router": "^3.8.0",
-    "watchify": "^2.2.1",
-    "uglify": "^0.1.1",
+    "koa-static": "^1.4.8",
+    "lodash": "^2.4.1",
+    "nib": "^1.1.0",
+    "pixi.js": "^2.2.3",
     "stylus": "^0.49.3",
-    "nib": "^1.1.0"
+    "uglify": "^0.1.1",
+    "watchify": "^2.2.1"
   },
   "devDependencies": {},
   "scripts": {
