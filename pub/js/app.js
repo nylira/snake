@@ -15,7 +15,7 @@ var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 var MAP_X = 1024
 var MAP_Y = 1024
 var GRID_UNIT = 32
-var GAME_PAUSED
+var GAME_PAUSED = true
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
 
@@ -33,11 +33,24 @@ var highScores
 var stage, renderer
 
 // scenes
-var sceneGameMenu
-var sceneGame
-var sceneGameOver
+var sceneMenu
+  , sceneMenuButtons
+  , button1
+  , button2
+  , button3
 
-var tileTexture, cubeTexture, redTexture, flowerTexture, tiles, cube, cube1, cube2
+var sceneGame
+  , cube
+  , cube1
+  , cube2
+  , tiles
+
+var sceneSummary
+
+var tileTexture
+  , cubeTexture
+  , redTexture
+  , buttonTexture
 
 // this run no matter what scene is loaded
 function preload() {
@@ -56,29 +69,30 @@ function preload() {
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
   document.getElementById('container').appendChild(renderer.view);
 
-  sceneGameMenu = new P.DisplayObjectContainer()
+  sceneMenu = new P.DisplayObjectContainer()
+  sceneMenuButtons = new P.DisplayObjectContainer()
   sceneGame = new P.DisplayObjectContainer()
-  sceneGameOver = new P.DisplayObjectContainer()
-  stage.addChild(sceneGameMenu)
+  sceneSummary = new P.DisplayObjectContainer()
+  stage.addChild(sceneMenu)
   stage.addChild(sceneGame)
-  stage.addChild(sceneGameOver)
-  sceneGameMenu.visible = false
-  sceneGame.visible = true
-  sceneGameOver.visible = false
+  stage.addChild(sceneSummary)
+  sceneMenu.visible = true
+  sceneGame.visible = false
+  sceneSummary.visible = false
 
   // setup textures
   var pixelRatio = window.devicePixelRatio;
   var renderOptions = {resolution: pixelRatio}
   if(pixelRatio === 2) {
     tileTexture = P.Texture.fromImage('../img/grid16x16@x2.png')
-    flowerTexture = P.Texture.fromImage('../img/flower16x16@x2.png')
     cubeTexture = P.Texture.fromImage('../img/block16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
+    buttonTexture = P.Texture.fromImage('../img/button64x256@x2.png')
   } else {
     tileTexture = P.Texture.fromImage('../img/grid16x16.png')
-    flowerTexture = P.Texture.fromImage('../img/flower16x16.png')
     cubeTexture = P.Texture.fromImage('../img/block16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
+    buttonTexture = P.Texture.fromImage('../img/button64x256.png')
   }
 
   // setup sprites
@@ -88,7 +102,26 @@ function preload() {
   cube2 = new P.Sprite(cubeTexture)
 }
 
-function init() {
+function initSceneMenu() {
+  button1 = new P.Sprite(buttonTexture)
+  button2 = new P.Sprite(buttonTexture)
+  button3 = new P.Sprite(buttonTexture)
+
+  button1.position.y = 0
+  button2.position.y = 64 + 128
+  button3.position.y = 64 + 128 + 64 + 128
+
+  sceneMenuButtons.x = 256
+  sceneMenuButtons.y = 256
+  sceneMenuButtons.addChild(button1)
+  sceneMenuButtons.addChild(button2)
+  sceneMenuButtons.addChild(button3)
+
+  sceneMenu.addChild(tiles)
+  sceneMenu.addChild(sceneMenuButtons)
+}
+
+function initSceneGame() {
   // keybindings
   combokeys.bind(['up', 'w'], function() {snakeMovement = 'n'})
   combokeys.bind(['down','s'], function() {snakeMovement = 's'})
@@ -98,16 +131,6 @@ function init() {
 
   // setup bg
   sceneGame.addChild(tiles)
-
-  // setup flowers
-  /*for(var i=0; i < 7; i++) {
-    var flower = new P.Sprite(flowerTexture)
-    var flowerPosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
-    flower.position.x = flowerPosition[0]
-    flower.position.y = flowerPosition[1]
-    flower.rotation = _.random(0, 2 * Math.PI)
-    stage.addChild(flower)
-  }*/
 
   // setup initial snake
   // randomize position in the middle 1/9 of map so player doesn't die instantly
@@ -126,46 +149,47 @@ function init() {
 
 function update(){
   // keep the game running if it isn't over
+  requestAnimationFrame(update);
+
   if(GAME_PAUSED !== true) {
-    requestAnimationFrame(update);
-  }
+    // spawn a random cube if one doesn't exist
+    if (randomCube === null) {
+      randomCube = spawnRandomSprite(sceneGame, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
+    }
 
-  // spawn a random cube if one doesn't exist
-  if (randomCube === null) {
-    randomCube = spawnRandomSprite(sceneGame, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
-  }
+    // if the snake is out of bounds, end the game
+    if (stayInBounds(snake[0], MAP_X, MAP_Y) !== true) {
+      endGame()
+    }
 
-  // if the snake is out of bounds, end the game
-  if (stayInBounds(snake[0], MAP_X, MAP_Y) !== true) {
-    endGame()
-  }
+    // find the location of the cube tail elements
+    var snakeTailPositions = []
+    _.map(_.tail(snake), function(cube){
+      snakeTailPositions.push([cube.position.x, cube.position.y])
+    })
 
-  // find the location of the cube tail elements
-  var snakeTailPositions = []
-  _.map(_.tail(snake), function(cube){
-    snakeTailPositions.push([cube.position.x, cube.position.y])
-  })
+    // if snake[0] collides with itself
+    if(_.some(snakeTailPositions, [snake[0].position.x, snake[0].position.y])) {
+      // end the game
+      endGame()
+    }
 
-  // if snake[0] collides with itself
-  if(_.some(snakeTailPositions, [snake[0].position.x, snake[0].position.y])) {
-    // end the game
-    endGame()
-  }
+    // if snake[0] collides with the randomcube
+    if (randomCube !== null && snake[0].position.x == randomCube.position.x && snake[0].position.y == randomCube.position.y) {
+      // remove randomCube's visibility
+      sceneGame.removeChild(randomCube)
+      // destroy it
+      randomCube = null
+      // make our snake longer
+      snakeLengthMax++
+    }
 
-  // if snake[0] collides with the randomcube
-  if (randomCube !== null && snake[0].position.x == randomCube.position.x && snake[0].position.y == randomCube.position.y) {
-    // remove randomCube's visibility
-    sceneGame.removeChild(randomCube)
-    // destroy it
-    randomCube = null
-    // make our snake longer
-    snakeLengthMax++
-  }
+    // move once every REFRESH_RATE
+    if(alarm.getTime() < new Date().getTime()) {
+      chainFlow(sceneGame, snake, snakeLengthMax, snakeMovement, cubeTexture, GRID_UNIT)
+      alarm.setTime(new Date().getTime() + REFRESH_RATE)
+    }
 
-  // move once every REFRESH_RATE
-  if(alarm.getTime() < new Date().getTime()) {
-    chainFlow(sceneGame, snake, snakeLengthMax, snakeMovement, cubeTexture, GRID_UNIT)
-    alarm.setTime(new Date().getTime() + REFRESH_RATE)
   }
   renderer.render(stage)
 }
@@ -229,11 +253,14 @@ function sortDescending(intArray) {
   
 function startGame(){
   GAME_PAUSED = false
-  init()
+  initSceneGame()
   update()
 }
 
 preload()
+initSceneMenu()
+update()
+
 /*
 var playButton = document.getElementById('play-button')
 playButton.addEventListener('click', function() {
