@@ -13,6 +13,7 @@ function chainFlow(stage, chain, chainLengthMax, direction, texture, gridUnit) {
     default: break
   }
   spawnChainedSprite(stage, chain, chainLengthMax, sprite, offsetX, offsetY)
+  return sprite
 }
 
 module.exports = chainFlow
