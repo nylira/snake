@@ -33,12 +33,13 @@ var highScores
 var stage, renderer
 
 // scenes
-var sceneGameWelcome
+var sceneGameMenu
 var sceneGame
 var sceneGameOver
 
 var tileTexture, cubeTexture, redTexture, flowerTexture, tiles, cube, cube1, cube2
 
+// this run no matter what scene is loaded
 function preload() {
   // recover high scores from local storage if there are any.
   var snakeDb = JSON.parse(localStorage.getItem('NyliraGameSnake'))
@@ -55,13 +56,13 @@ function preload() {
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
   document.getElementById('container').appendChild(renderer.view);
 
-  sceneGameWelcome = new P.DisplayObjectContainer()
+  sceneGameMenu = new P.DisplayObjectContainer()
   sceneGame = new P.DisplayObjectContainer()
   sceneGameOver = new P.DisplayObjectContainer()
-  stage.addChild(sceneGameWelcome)
+  stage.addChild(sceneGameMenu)
   stage.addChild(sceneGame)
   stage.addChild(sceneGameOver)
-  sceneGameWelcome.visible = false
+  sceneGameMenu.visible = false
   sceneGame.visible = true
   sceneGameOver.visible = false
 
@@ -233,8 +234,10 @@ function startGame(){
 }
 
 preload()
+/*
 var playButton = document.getElementById('play-button')
 playButton.addEventListener('click', function() {
   startGame()
   playButton.style.display = 'none'
 })
+*/
