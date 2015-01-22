@@ -125,13 +125,9 @@ function move(dir) {
 }
 
 function spawnRandomSprite(sprite) {
-  var rangeX = (mapX / gu) - 1
-  var rangeY = (mapY / gu) - 1
 
   var positionsAreIllegal = true
-  var randomPositionX = _.random(0, rangeX) * gu
-  var randomPositionY = _.random(0, rangeY) * gu
-  var randomPosition = [randomPositionX, randomPositionY]
+  var spritePosition = randomPosition(mapX, mapY, gu)
 
   var illegalSpawnPositions = []
   _.map(snake, function(cube){
@@ -139,26 +135,23 @@ function spawnRandomSprite(sprite) {
     illegalSpawnPositions.push([cube.position.x, cube.position.y])
   })
 
-  //console.log('randomPosition', randomPosition)
+  //console.log('spritePosition', spritePosition)
   //console.log('illegalSpawnPositions: ', illegalSpawnPositions)
 
   while(positionsAreIllegal) {
     // if the random position chosen is one of the snake's positions
-    if(_.some(illegalSpawnPositions, randomPosition)) {
-      randomPositionX = _.random(0, rangeX) * gu
-      randomPositionY = _.random(0, rangeY) * gu
+    if(_.some(illegalSpawnPositions, spritePosition)) {
       // try a new random position
-      randomPosition = [randomPositionX, randomPositionY]
+      spritePosition = randomPosition(mapX, mapY, gu)
       //console.log('the random sprite\'s position is illegal, trying again')
-    // else the random position is fine
     } else {
       positionsAreIllegal = false
-      //console.log('randomPosition is legal: ', randomPosition)
+      //console.log('spritePosition is legal: ', spritePosition)
     }
   }
 
-  sprite.position.x = randomPosition[0]
-  sprite.position.y = randomPosition[1]
+  sprite.position.x = spritePosition[0]
+  sprite.position.y = spritePosition[1]
   stage.addChild(sprite)
   randomCube = sprite
   //console.log("random sprite added at", sprite.position.x, sprite.position.y)
@@ -190,6 +183,16 @@ function stayInBounds(sprite) {
   if (sprite.position.x < 0 || sprite.position.x >= mapX) {
     restartGame()
   }
+}
+
+function randomPosition(maxX, maxY, gridUnit) {
+  var rangeX = (maxX / gridUnit) - 1
+  var rangeY = (maxY / gridUnit) - 1
+
+  var randomPositionX = _.random(0, rangeX) * gridUnit
+  var randomPositionY = _.random(0, rangeY) * gridUnit
+
+  return [randomPositionX, randomPositionY]
 }
 
 function restartGame() {
