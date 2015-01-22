@@ -1,12 +1,14 @@
-/*globals: Mousetrap*/
 'use strict'
+// external
 var P = require('pixi.js')
-//var Mousetrap = require('mousetrap')
+var Combokeys = require("combokeys");
+var combokeys = new Combokeys(document)
 
 // globals
 var mapX = 512
 var mapY = 512
 var gu = 16
+var gameOver = false
 
 // player variables
 var $direction = 'x'
@@ -15,12 +17,7 @@ var alarm = new Date()
 alarm.setTime(new Date().getTime() + delay)
 var cubes = []
 
-// keybindings
-Mousetrap.bind(['up', 'w'], function() {$direction = 'n'})
-Mousetrap.bind(['down','s'], function() {$direction = 's'})
-Mousetrap.bind(['left','a'], function() {$direction = 'e'})
-Mousetrap.bind(['right','d'], function() {$direction = 'w'})
-Mousetrap.bind(['space','x'], function() {$direction = 'x'})
+
 
 // setup stage
 var stage = new P.Stage(0xCCD0CC)
@@ -37,6 +34,12 @@ var cube1 = new P.Sprite(cubeTexture)
 var cube2 = new P.Sprite(cubeTexture)
 
 function initialize() {
+  // keybindings
+  combokeys.bind(['up', 'w'], function() {$direction = 'n'; console.log("UP!!")})
+  combokeys.bind(['down','s'], function() {$direction = 's'})
+  combokeys.bind(['left','a'], function() {$direction = 'e'})
+  combokeys.bind(['right','d'], function() {$direction = 'w'})
+  combokeys.bind(['space','x'], function() {$direction = 'x'})
   // setup bg
   stage.addChild(tiles)
 
@@ -57,10 +60,14 @@ function initialize() {
 initialize()
 
 // animation loop
-requestAnimationFrame(animate);
-function animate(){
+if(gameOver !== true) {
   requestAnimationFrame(animate);
+}
 
+function animate(){
+  if(gameOver !== true) {
+    requestAnimationFrame(animate);
+  }
 
   // move once every delay
   if(alarm.getTime() < new Date().getTime()) {
@@ -111,34 +118,27 @@ function spawnCube(offsetX, offsetY){
 }
 
 function stayInBounds(sprite) {
-  if(sprite.position.y <= 0){
-    gameOver()
-    //move(sprite, 'x')
-    //sprite.position.y = 0
-  } else if (sprite.position.y >= mapY) {
-    gameOver()
-    //move(sprite, 'x')
-    //sprite.position.y = mapY - gu
+  if(sprite.position.y < 0){
+    restartGame()
+  } else if (sprite.position.y > mapY) {
+    restartGame()
   }
-  if (sprite.position.x <= 0) {
-    gameOver()
-    //move(sprite, 'x')
-    //sprite.position.x = 0
+  if (sprite.position.x < 0) {
+    restartGame()
   } else if (sprite.position.x >= mapX) {
-    gameOver()
-    //move(sprite, 'x')
-    //sprite.position.x = mapX - gu
+    restartGame()
   }
 }
 
-function gameOver() {
-  alert('game over. restarting...')
-  Mousetrap.pause()
+function restartGame() {
+  gameOver = true
+  console.log('game over. restarting...')
+  combokeys.reset()
   $direction = 'x'
   for (var i=stage.children.length-1; i >= 0; i--) {
     stage.removeChild(stage.children[i])
   }
   cubes = []
   initialize()
-  Mousetrap.unpause()
+  gameOver = false
 }
