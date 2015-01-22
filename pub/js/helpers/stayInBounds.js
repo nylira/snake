@@ -8,5 +8,4 @@ function stayInBounds(sprite, maxX, maxY) {
   }
   return inBounds
 }
-
 module.exports = stayInBounds

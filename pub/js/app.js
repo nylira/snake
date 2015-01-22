@@ -20,7 +20,7 @@ var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
 
 // player variables
-var snakeDirection = null
+var snakeMovement = null
 var alarm = new Date()
 alarm.setTime(new Date().getTime() + REFRESH_RATE)
 var snake = []
@@ -32,11 +32,6 @@ var highScores = []
 var stage, renderer
 var tileTexture, cubeTexture, redTexture, flowerTexture, tiles, cube, cube1, cube2
 
-// get the resolution of the screen pixi is on (if retina this will be 2)
-var myDisplayResolution = window.devicePixelRatio;
-// create an options object and include our resolution
-var renderOptions = {resolution: myDisplayResolution}
-
 function preload() {
   // recover high scores from local storage if there are any.
   var ls = localStorage.getItem('nyliraGameSnake')
@@ -46,14 +41,16 @@ function preload() {
   } else {
     console.log('no high scores in local storage')
   }
-    
-  sessionStorage.setItem('nyliraSnakeHighScores', "John");
+
   // setup stage
   stage = new P.Stage(0xCCD0CC)
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
   document.getElementById('container').appendChild(renderer.view);
 
-  if(myDisplayResolution === 2) {
+  // setup textures
+  var pixelRatio = window.devicePixelRatio;
+  var renderOptions = {resolution: pixelRatio}
+  if(pixelRatio === 2) {
     tileTexture = P.Texture.fromImage('../img/grid16x16@x2.png')
     flowerTexture = P.Texture.fromImage('../img/flower16x16@x2.png')
     cubeTexture = P.Texture.fromImage('../img/block16x16@x2.png')
@@ -74,11 +71,11 @@ function preload() {
 
 function init() {
   // keybindings
-  combokeys.bind(['up', 'w'], function() {snakeDirection = 'n'})
-  combokeys.bind(['down','s'], function() {snakeDirection = 's'})
-  combokeys.bind(['left','a'], function() {snakeDirection = 'e'})
-  combokeys.bind(['right','d'], function() {snakeDirection = 'w'})
-  combokeys.bind(['space','x'], function() {snakeDirection = null})
+  combokeys.bind(['up', 'w'], function() {snakeMovement = 'n'})
+  combokeys.bind(['down','s'], function() {snakeMovement = 's'})
+  combokeys.bind(['left','a'], function() {snakeMovement = 'e'})
+  combokeys.bind(['right','d'], function() {snakeMovement = 'w'})
+  combokeys.bind(['space','x'], function() {snakeMovement = null})
 
   // setup bg
   stage.addChild(tiles)
@@ -100,7 +97,7 @@ function init() {
   cube.position.y = initialPosition[1]
 
   //randomize direction
-  snakeDirection = _.head(_.shuffle(DIRECTIONS))
+  snakeMovement = _.head(_.shuffle(DIRECTIONS))
 
   // go!
   snake.push(cube)
@@ -148,36 +145,30 @@ function update(){
 
   // move once every REFRESH_RATE
   if(alarm.getTime() < new Date().getTime()) {
-    chainFlow(stage, snake, snakeLengthMax, snakeDirection, cubeTexture, GRID_UNIT)
+    chainFlow(stage, snake, snakeLengthMax, snakeMovement, cubeTexture, GRID_UNIT)
     alarm.setTime(new Date().getTime() + REFRESH_RATE)
   }
   renderer.render(stage)
 }
 
 function endGame() {
+  // pauses the game and shows the scoreboard, play again button
   GAME_PAUSED = true
-
-  // unbind the hotkeys
   combokeys.reset()
-
-  // stop the snake from moving
-  snakeDirection = null
-
+  snakeMovement = null
   resetGame()
 }
 
 function resetGame() {
-  console.log('Game is resetting now!')
+  // what happens after pressing play again
 
-  // remove visual representation of snake
+  // clear stuff from stage
   for (var i=stage.children.length-1; i >= 0; i--) {
     stage.removeChild(stage.children[i])
   }
 
-  // remove the randomCube
+  // clear stuff from memory
   randomCube = null
-
-  // remove elements from the snake
   snake = []
 
   // show high score
