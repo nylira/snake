@@ -16,7 +16,8 @@ var $direction = null
 var refreshRate = 100//ms
 var alarm = new Date()
 alarm.setTime(new Date().getTime() + refreshRate)
-var cubes = []
+var snake = []
+var maxSnakeLength
 var randomCube = null
 
 // stage variables
@@ -51,7 +52,7 @@ function init() {
   // setup bg
   stage.addChild(tiles)
 
-  // setup initial cubes
+  // setup initial snake
   cube.position.x = 240
   cube.position.y = 240
   cube1.position.x = 240
@@ -61,9 +62,12 @@ function init() {
   stage.addChild(cube)
   stage.addChild(cube1)
   stage.addChild(cube2)
-  cubes.push(cube)
-  cubes.push(cube1)
-  cubes.push(cube2)
+
+  snake.push(cube)
+  snake.push(cube1)
+  snake.push(cube2)
+
+  maxSnakeLength = 3
 }
 
 function update(){
@@ -78,20 +82,25 @@ function update(){
   }
 
   // find the location of the cube tail elements
-  var cubesTailPositions = []
-  _.map(_.tail(cubes), function(cube){
-    cubesTailPositions.push([cube.position.x, cube.position.y])
+  var snakeTailPositions = []
+  _.map(_.tail(snake), function(cube){
+    snakeTailPositions.push([cube.position.x, cube.position.y])
   })
 
-  // if cubes[0] collides with itself
-  if(_.some(cubesTailPositions, [cubes[0].position.x, cubes[0].position.y])) {
+  // if snake[0] collides with itself
+  if(_.some(snakeTailPositions, [snake[0].position.x, snake[0].position.y])) {
     // end the game
     restartGame()
   }
 
-  // if the head of the snake collides with the randomcube
-  if (randomCube !== null && cubes[0].position.x == randomCube.position.x && cubes[0].position.y == randomCube.position.y) {
-    console.log('COLLISION!!!')
+  // if snake[0] collides with the randomcube
+  if (randomCube !== null && snake[0].position.x == randomCube.position.x && snake[0].position.y == randomCube.position.y) {
+    // remove randomCube's visibility
+    stage.removeChild(randomCube)
+    // destroy it
+    randomCube = null
+    // make our snake longer
+    maxSnakeLength++
   }
 
   // move once every refreshRate
@@ -100,7 +109,7 @@ function update(){
     alarm.setTime(new Date().getTime() + refreshRate)
   }
 
-  stayInBounds(cubes[0])
+  stayInBounds(snake[0])
   renderer.render(stage)
 }
 
@@ -125,7 +134,7 @@ function spawnRandomSprite(sprite) {
   var randomPosition = [randomPositionX, randomPositionY]
 
   var illegalSpawnPositions = []
-  _.map(cubes, function(cube){
+  _.map(snake, function(cube){
     //console.log([cube.position.x, cube.position.y])
     illegalSpawnPositions.push([cube.position.x, cube.position.y])
   })
@@ -158,16 +167,18 @@ function spawnRandomSprite(sprite) {
 function spawnSprite(sprite, offsetX, offsetY){
   // set up new cube
   var newCube = sprite
-  newCube.position.x = cubes[0].position.x + offsetX
-  newCube.position.y = cubes[0].position.y + offsetY
+  newCube.position.x = snake[0].position.x + offsetX
+  newCube.position.y = snake[0].position.y + offsetY
 
   // add new cube to the head of the list
   stage.addChild(newCube)
-  cubes.unshift(newCube)
+  snake.unshift(newCube)
 
-  // remove the old cube
-  var popped = cubes.pop()
-  stage.removeChild(popped)
+  // remove the old cube if it's greater than max snake length
+  if(snake.length > maxSnakeLength) {
+    var popped = snake.pop()
+    stage.removeChild(popped)
+  }
 
   return newCube
 }
@@ -201,7 +212,7 @@ function restartGame() {
   }
 
   // remove elements from the snake
-  cubes = []
+  snake = []
 
   startGame()
 }
