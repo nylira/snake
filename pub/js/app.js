@@ -26,7 +26,8 @@ alarm.setTime(new Date().getTime() + REFRESH_RATE)
 var snake = []
 var snakeLengthMax
 var randomCube = null
-var highScores = []
+var snakeDb
+var highScores
 
 // stage variables
 var stage, renderer
@@ -34,12 +35,13 @@ var tileTexture, cubeTexture, redTexture, flowerTexture, tiles, cube, cube1, cub
 
 function preload() {
   // recover high scores from local storage if there are any.
-  var ls = localStorage.getItem('nyliraGameSnake')
-  if(ls !== null){
-    highScores = ls.highScores
-    console.log(highScores)
+  var snakeDb = JSON.parse(localStorage.getItem('NyliraGameSnake'))
+  if(snakeDb !== null){
+    highScores = snakeDb.highScores
+    highScores = _.sortBy(highScores, function(num) {return num}).reverse()
+    console.log('highScores retrieved from localStorage: ', highScores)
   } else {
-    console.log('no high scores in local storage')
+    console.log('No high scores in local storage yet. Add some!')
   }
 
   // setup stage
@@ -171,12 +173,43 @@ function resetGame() {
   randomCube = null
   snake = []
 
-  // show high score
+  // update high scores
   console.log('Your Score: ', snakeLengthMax)
+
+  console.log(updateHighScores(snakeLengthMax))
+  console.log('All Time Highs: '
+  , localStorage.getItem('NyliraGameSnake'))
 
   startGame()
 }
 
+function updateHighScores(newScore) {
+  var highScoreMessage
+  if(highScores.length < 10) {
+    highScores.push(newScore)
+    highScoreMessage = 'NEW HIGH SCORE!'
+    updateHighScoresDb()
+  } else if (_.min(highScores) < newScore) {
+    highScores = sortDescending(highScores)
+    highScores.pop()
+    highScores.push(newScore)
+    highScoreMessage = 'You knocked someone off the high score list!'
+    updateHighScoresDb()
+  } else {
+    highScoreMessage = 'Sorry, you didn\'t beat any records. Try again!'
+  }
+  return highScoreMessage
+}
+
+function updateHighScoresDb() {
+  highScores = sortDescending(highScores)
+  localStorage.setItem('NyliraGameSnake', JSON.stringify({'highScores':highScores}))
+}
+
+function sortDescending(intArray) {
+  return _.sortBy(intArray, function(num) {return num}).reverse()
+}
+  
 function startGame(){
   GAME_PAUSED = false
   init()
