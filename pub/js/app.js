@@ -67,12 +67,31 @@ function init() {
 }
 
 function update(){
+  // keep the game running if it isn't over
   if(gameOver !== true) {
     requestAnimationFrame(update);
   }
 
+  // spawn a random cube if one doesn't exist
   if (randomCube === null) {
     spawnRandomSprite(new P.Sprite(cubeTextureRed))
+  }
+
+  // find the location of the cube tail elements
+  var cubesTailPositions = []
+  _.map(_.tail(cubes), function(cube){
+    cubesTailPositions.push([cube.position.x, cube.position.y])
+  })
+
+  // if cubes[0] collides with itself
+  if(_.some(cubesTailPositions, [cubes[0].position.x, cubes[0].position.y])) {
+    // end the game
+    restartGame()
+  }
+
+  // if the head of the snake collides with the randomcube
+  if (randomCube !== null && cubes[0].position.x == randomCube.position.x && cubes[0].position.y == randomCube.position.y) {
+    console.log('COLLISION!!!')
   }
 
   // move once every refreshRate
@@ -80,6 +99,7 @@ function update(){
     move($direction)
     alarm.setTime(new Date().getTime() + refreshRate)
   }
+
   stayInBounds(cubes[0])
   renderer.render(stage)
 }
