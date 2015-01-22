@@ -27,7 +27,6 @@ var tileTexture, cubeTexture, redTexture, flowerTexture, tiles, cube, cube1, cub
 
 // get the resolution of the screen pixi is on (if retina this will be 2)
 var myDisplayResolution = window.devicePixelRatio;
-console.log(myDisplayResolution)
 // create an options object and include our resolution
 var renderOptions = {resolution: myDisplayResolution}
 
@@ -35,7 +34,7 @@ function preload() {
   // setup stage
   stage = new P.Stage(0xCCD0CC)
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
-  document.body.appendChild(renderer.view);
+  document.getElementById('container').appendChild(renderer.view);
 
   if(myDisplayResolution === 2) {
     tileTexture = P.Texture.fromImage('../img/grid16x16@x2.png')
