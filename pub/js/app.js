@@ -6,9 +6,9 @@ var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
 
 // constants
-var MAP_X = 512
-var MAP_Y = 512
-var GRID_UNIT = 16
+var MAP_X = 1024
+var MAP_Y = 1024
+var GRID_UNIT = 32
 var GAME_OVER
 var DIRECTIONS = ['n', 's', 'e', 'w']
 var REFRESH_RATE = 100//ms
@@ -23,18 +23,31 @@ var randomCube = null
 
 // stage variables
 var stage, renderer
-var tileTexture, cubeTexture, cubeTextureRed, tiles, cube, cube1, cube2
+var tileTexture, cubeTexture, redTexture, flowerTexture, tiles, cube, cube1, cube2
+
+// get the resolution of the screen pixi is on (if retina this will be 2)
+var myDisplayResolution = window.devicePixelRatio;
+console.log(myDisplayResolution)
+// create an options object and include our resolution
+var renderOptions = {resolution: myDisplayResolution}
 
 function preload() {
   // setup stage
   stage = new P.Stage(0xCCD0CC)
-  renderer = P.autoDetectRenderer(MAP_X, MAP_Y)
+  renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
   document.body.appendChild(renderer.view);
 
-  // setup textures
-  tileTexture = P.Texture.fromImage('../img/grid64x64.png')
-  cubeTexture = P.Texture.fromImage('../img/block16x16.png')
-  cubeTextureRed = P.Texture.fromImage('../img/block16x16red.png')
+  if(myDisplayResolution === 2) {
+    tileTexture = P.Texture.fromImage('../img/grid16x16@x2.png')
+    flowerTexture = P.Texture.fromImage('../img/flower16x16@x2.png')
+    cubeTexture = P.Texture.fromImage('../img/block16x16@x2.png')
+    redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
+  } else {
+    tileTexture = P.Texture.fromImage('../img/grid16x16.png')
+    flowerTexture = P.Texture.fromImage('../img/flower16x16.png')
+    cubeTexture = P.Texture.fromImage('../img/block16x16.png')
+    redTexture = P.Texture.fromImage('../img/block16x16red.png')
+  }
 
   // setup sprites
   tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_X)
@@ -50,8 +63,19 @@ function init() {
   combokeys.bind(['left','a'], function() {snakeDirection = 'e'})
   combokeys.bind(['right','d'], function() {snakeDirection = 'w'})
   combokeys.bind(['space','x'], function() {snakeDirection = null})
+
   // setup bg
   stage.addChild(tiles)
+
+  // setup flowers
+  /*for(var i=0; i < 7; i++) {
+    var flower = new P.Sprite(flowerTexture)
+    var flowerPosition = randomPosition(MAP_X, MAP_Y, GRID_UNIT)
+    flower.position.x = flowerPosition[0]
+    flower.position.y = flowerPosition[1]
+    flower.rotation = _.random(0, 2 * Math.PI)
+    stage.addChild(flower)
+  }*/
 
   // setup initial snake
   // randomize position
@@ -76,7 +100,7 @@ function update(){
 
   // spawn a random cube if one doesn't exist
   if (randomCube === null) {
-    spawnRandomSprite(new P.Sprite(cubeTextureRed))
+    spawnRandomSprite(new P.Sprite(redTexture))
   }
 
   // find the location of the cube tail elements
@@ -194,8 +218,6 @@ function endGame() {
 
   // stop the snake from moving
   snakeDirection = null
-
-  console.log('GAME OVER. Restarting in 3 seconds...')
 
   resetGame()
 }
