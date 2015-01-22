@@ -35,9 +35,13 @@ var stage, renderer
 // scenes
 var sceneMenu
   , sceneMenuButtons
-  , button1
-  , button2
-  , button3
+  , buttonOne
+  , buttonTwo
+  , buttonThree
+  , buttonOneText
+  , buttonTwoText
+  , buttonThreeText
+  , buttonTextStyle
 
 var sceneGame
   , cube
@@ -103,19 +107,35 @@ function preload() {
 }
 
 function initSceneMenu() {
-  button1 = new P.Sprite(buttonTexture)
-  button2 = new P.Sprite(buttonTexture)
-  button3 = new P.Sprite(buttonTexture)
+  buttonOne = new P.Sprite(buttonTexture)
+  buttonTwo = new P.Sprite(buttonTexture)
+  buttonThree = new P.Sprite(buttonTexture)
 
-  button1.position.y = 0
-  button2.position.y = 64 + 128
-  button3.position.y = 64 + 128 + 64 + 128
+  buttonOne.position.y = 0
+  buttonTwo.position.y = 64 + 128
+  buttonThree.position.y = 64 + 128 + 64 + 128
+
+  buttonTextStyle = {
+    font: 'bold 48px Arial'
+  , fill: '#FFFFFF'
+  , align: 'center'
+  , dropShadow: true
+  , dropShadowColor: '#003366'
+  , dropShadowDistance: 6
+  }
+
+  buttonOneText = new P.Text('Resume Game', buttonTextStyle)
+  buttonOne.addChild(buttonOneText)
+  buttonTwoText = new P.Text('New Game', buttonTextStyle)
+  buttonTwo.addChild(buttonTwoText)
+  buttonThreeText = new P.Text('High Scores', buttonTextStyle)
+  buttonThree.addChild(buttonThreeText)
 
   sceneMenuButtons.x = 256
   sceneMenuButtons.y = 256
-  sceneMenuButtons.addChild(button1)
-  sceneMenuButtons.addChild(button2)
-  sceneMenuButtons.addChild(button3)
+  sceneMenuButtons.addChild(buttonOne)
+  sceneMenuButtons.addChild(buttonTwo)
+  sceneMenuButtons.addChild(buttonThree)
 
   sceneMenu.addChild(tiles)
   sceneMenu.addChild(sceneMenuButtons)
