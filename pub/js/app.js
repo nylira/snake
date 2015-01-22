@@ -8,6 +8,7 @@ var combokeys = new Combokeys(document)
 // helpers
 var randomPosition = require('./helpers/randomPosition')
 var stayInBounds = require('./helpers/stayInBounds')
+var spawnChainedSprite = require('./helpers/spawnChainedSprite')
 
 // constants
 var MAP_X = 1024
@@ -24,6 +25,7 @@ alarm.setTime(new Date().getTime() + REFRESH_RATE)
 var snake = []
 var snakeLengthMax
 var randomCube = null
+var highScores = []
 
 // stage variables
 var stage, renderer
@@ -35,6 +37,16 @@ var myDisplayResolution = window.devicePixelRatio;
 var renderOptions = {resolution: myDisplayResolution}
 
 function preload() {
+  // recover high scores from local storage if there are any.
+  var ls = localStorage.getItem('nyliraGameSnake')
+  if(ls !== null){
+    highScores = ls.highScores
+    console.log(highScores)
+  } else {
+    console.log('no high scores in local storage')
+  }
+    
+  sessionStorage.setItem('nyliraSnakeHighScores', "John");
   // setup stage
   stage = new P.Stage(0xCCD0CC)
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
@@ -138,21 +150,21 @@ function update(){
     move(snakeDirection)
     alarm.setTime(new Date().getTime() + REFRESH_RATE)
   }
-
-    
-
   renderer.render(stage)
 }
 
 function move(dir) {
   var sprite = new P.Sprite(cubeTexture)
+  var offsetX = 0
+  var offsetY = 0
   switch(dir) {
-    case 'n': spawnSprite(sprite, 0, -GRID_UNIT); break
-    case 's': spawnSprite(sprite, 0, GRID_UNIT); break
-    case 'e': spawnSprite(sprite, -GRID_UNIT, 0); break
-    case 'w': spawnSprite(sprite, GRID_UNIT, 0); break
+    case 'n': offsetY = -GRID_UNIT; break
+    case 's': offsetY = GRID_UNIT; break
+    case 'e': offsetX = -GRID_UNIT; break
+    case 'w': offsetX = GRID_UNIT; break
     default: break
   }
+  spawnChainedSprite(stage, snake, snakeLengthMax, sprite, offsetX, offsetY)
 }
 
 function spawnRandomSprite(sprite) {
@@ -178,25 +190,6 @@ function spawnRandomSprite(sprite) {
   sprite.position.y = spritePosition[1]
   stage.addChild(sprite)
   randomCube = sprite
-}
-
-function spawnSprite(sprite, offsetX, offsetY){
-  // set up new cube
-  var newCube = sprite
-  newCube.position.x = snake[0].position.x + offsetX
-  newCube.position.y = snake[0].position.y + offsetY
-
-  // add new cube to the head of the list
-  stage.addChild(newCube)
-  snake.unshift(newCube)
-
-  // remove the old cube if it's greater than max snake length
-  if(snake.length > snakeLengthMax) {
-    var popped = snake.pop()
-    stage.removeChild(popped)
-  }
-
-  return newCube
 }
 
 
