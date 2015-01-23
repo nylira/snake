@@ -37,10 +37,8 @@ var stage, renderer
 
 // scenes
 var sceneMenu
-  , sceneMenuButtons
   , btnResume
   , btnNew
-  , logoText
 
 var sceneGame
   , cube
@@ -74,7 +72,6 @@ function preload() {
   stage.interactive = true // make it clickable
 
   sceneMenu = new P.DisplayObjectContainer()
-  sceneMenuButtons = new P.DisplayObjectContainer()
   sceneGame = new P.DisplayObjectContainer()
   sceneSummary = new P.DisplayObjectContainer()
   stage.addChild(sceneMenu)
@@ -106,10 +103,10 @@ function preload() {
   cube2 = new P.Sprite(cubeTexture)
 }
 
-
 function initSceneMenu() {
-  sceneMenu.width = MAP_X
-  sceneMenu.height = MAP_Y
+  // background
+  sceneMenu.addChild(tiles)
+
   // logo
   var logoTextStyle = {
     font: 'bold 128px Arial'
@@ -121,23 +118,35 @@ function initSceneMenu() {
   var logoText = new P.Text('Snake', logoTextStyle)
   logoText.position.x = (renderer.width - logoText.width) /2
   logoText.position.y = 96
+  sceneMenu.addChild(logoText)
+
+  // input
+  var inputTextStyle = {
+    font: '32px Arial'
+  , fill: '#000000'
+  , dropShadow: true
+  , dropShadowColor: '#0099dd'
+  , dropShadowDistance: 2
+  }
+  var inputText = new P.Text('Controls: Arrow Keys or WASD (Spacebar to Pause)', inputTextStyle)
+  inputText.position.x = (renderer.width - inputText.width) /2
+  inputText.position.y = 800
+  sceneMenu.addChild(inputText)
+
+  // button group
+  var sceneMenuButtons = new P.DisplayObjectContainer()
+  sceneMenuButtons.x = 256
+  sceneMenuButtons.y = 352
+  sceneMenu.addChild(sceneMenuButtons)
 
   // buttons
   btnNew = new Button('New Game', btnTexture)
   btnNew.position.y = 0
+  sceneMenuButtons.addChild(btnNew)
 
   btnResume = new Button('Resume Game', btnTexture)
   btnResume.position.y = 32 + btnNew.height
-
-  sceneMenuButtons.x = 256
-  sceneMenuButtons.y = 352
-
   sceneMenuButtons.addChild(btnResume)
-  sceneMenuButtons.addChild(btnNew)
-
-  sceneMenu.addChild(tiles)
-  sceneMenu.addChild(logoText)
-  sceneMenu.addChild(sceneMenuButtons)
 }
 
 function initSceneGame() {
