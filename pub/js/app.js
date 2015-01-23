@@ -18,11 +18,12 @@ var MAP_Y = 1024
 var GRID_UNIT = 32
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
-var GAME_PAUSED = false
-var GAME_RUNNING = false
+var GAME_PAUSED = false // used when a game is running and paused
+var GAME_RUNNING = false // used when a game is running
 
 // player variables
 var snakeMovement = null
+var snakeMovementLast = null
 var alarm = new Date()
 alarm.setTime(new Date().getTime() + REFRESH_RATE)
 var snake = []
@@ -135,8 +136,7 @@ function initSceneGame() {
   combokeys.bind(['left','a'], function() {snakeMovement = 'e'})
   combokeys.bind(['right','d'], function() {snakeMovement = 'w'})
 
-  combokeys.bind(['space','x'], function() {
-    snakeMovement = null
+  combokeys.bind(['space','esc', 'x'], function() {
     sceneMenu.visible = true
     sceneGame.visible = false
     GAME_PAUSED = true
@@ -151,9 +151,6 @@ function initSceneGame() {
   cube.position.x = initialPosition[0]
   cube.position.y = initialPosition[1]
 
-  //randomize direction
-  snakeMovement = _.head(_.shuffle(DIRECTIONS))
-
   // go!
   snake.push(cube)
   sceneGame.addChild(cube)
@@ -164,10 +161,22 @@ function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
 
+  if(GAME_PAUSED === true) {
+    snakeMovementLast = snakeMovement
+    snakeMovement = null
+  } else if (snakeMovement === null && snakeMovementLast === null) {
+      snakeMovement = _.head(_.shuffle(DIRECTIONS))
+  } else if (snakeMovement === null && snakeMovementLast !== null) {
+      snakeMovement = snakeMovementLast
+  }
+
   if(GAME_RUNNING === true && GAME_PAUSED === true) {
     btnResume.alpha = 1.0
     btnResume.click = function() {
       console.log('you clicked Resume Game')
+      sceneMenu.visible = false
+      sceneGame.visible = true
+      GAME_PAUSED = false
     }
   } else {
     btnResume.alpha = 0.5
@@ -186,7 +195,6 @@ function update(){
       resetGame()
     }
     console.log('you clicked New Game')
-    
   }
 
   if(GAME_RUNNING === true && GAME_PAUSED === false) {
