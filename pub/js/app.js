@@ -141,6 +141,7 @@ function initSceneGame() {
     sceneMenu.visible = !sceneMenu.visible
     sceneGame.visible = !sceneGame.visible
     GAME_PAUSED = !GAME_PAUSED
+    toggleSnakeMovement()
   })
 
   // setup bg
@@ -165,15 +166,11 @@ function update(){
   // stop snake movement if game is paused
   // if game is running for first time, set initial snakeMovement to random value
   // if game is unpaused, set snakeMovement to previous movement value value
-  if(GAME_PAUSED === true) {
-    snakeMovementLast = snakeMovement
-    snakeMovement = null
-  } else if (snakeMovement === null && snakeMovementLast === null) {
-      snakeMovement = _.head(_.shuffle(DIRECTIONS))
-  } else if (snakeMovement === null && snakeMovementLast !== null) {
-      snakeMovement = snakeMovementLast
-  }
 
+
+
+
+  // btnResume
   if(GAME_RUNNING === true && GAME_PAUSED === true) {
     btnResume.alpha = 1.0
     btnResume.click = function() {
@@ -189,16 +186,20 @@ function update(){
     }
   } 
 
-  btnNew.click = function() {
-    sceneMenu.visible = false
-    sceneGame.visible = true
-    GAME_PAUSED = false
-    if(GAME_RUNNING === true) {
-      endGame()
-    } else {
-      resetGame()
+  // btnNew
+  if(GAME_RUNNING === true) {
+    btnNew.alpha = 0.5
+    btnNew.click = function() {
+      console.error('A game is already running')
     }
-    console.log('you clicked New Game')
+  } else {
+    btnNew.alpha = 1.0
+    btnNew.click = function() {
+      sceneMenu.visible = false
+      sceneGame.visible = true
+      startGame()
+      console.log('Starting a new game')
+    }
   }
 
   if(GAME_RUNNING === true && GAME_PAUSED === false) {
@@ -245,33 +246,34 @@ function update(){
 }
 
 function endGame() {
-  // pauses the game and shows the scoreboard, play again btn
+  GAME_PAUSED = true
   GAME_RUNNING = false
+
   combokeys.reset()
-  snakeMovement = null
-  resetGame()
-}
 
-function resetGame() {
-  // what happens after pressing play again
-
-  // clear stuff from stage
+  // clear stuff
   for (var i=sceneGame.children.length-1; i >= 0; i--) {
     sceneGame.removeChild(sceneGame.children[i])
   }
-
-  // clear stuff from memory
   randomCube = null
   snake = []
 
   // update high scores
   console.log('Your Score: ', snakeLengthMax)
-
   console.log(updateHighScores(snakeLengthMax))
   console.log('All Time Highs: '
   , localStorage.getItem('NyliraGameSnake'))
 
-  startGame()
+  sceneMenu.visible = true
+  sceneGame.visible = false
+}
+
+function startGame(){
+  GAME_PAUSED = false
+  GAME_RUNNING = true
+  initSceneGame()
+  update()
+  toggleSnakeMovement()
 }
 
 function updateHighScores(newScore) {
@@ -301,10 +303,16 @@ function sortDescending(intArray) {
   return _.sortBy(intArray, function(num) {return num}).reverse()
 }
   
-function startGame(){
-  GAME_RUNNING = true
-  initSceneGame()
-  update()
+function toggleSnakeMovement() {
+  if(GAME_RUNNING === true && GAME_PAUSED === true) {
+    snakeMovementLast = snakeMovement
+    snakeMovement = null
+  } else if (snakeMovement === null && snakeMovementLast === null) {
+      snakeMovement = _.head(_.shuffle(DIRECTIONS))
+  } else if (snakeMovement === null && snakeMovementLast !== null) {
+      snakeMovement = snakeMovementLast
+  }
+  return snakeMovement
 }
 
 preload()
