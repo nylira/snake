@@ -2,7 +2,9 @@
 // TODO: create touch controls
 // TODO: change display depending on user's screen
 // TODO: text element polish
-// TODO: colors for the Game page
+// TODO: colors for the Game page: gradients, etc
+// TODO: particle effects
+// TODO: add message when new high score is achieved
 
 // libraries
 var P = require('pixi.js')
@@ -268,7 +270,6 @@ function update(){
   // btnAgain
   if(GAME_RUNNING === false && GAME_PAUSED === true) {
     btnAgain.click = function() {
-      console.log('You\'re starting a new game!')
       sceneSummary.visible = false
       sceneGame.visible = true
       GAME_PAUSED = false
@@ -366,10 +367,9 @@ function endGame() {
   snake = []
 
   // update high scores
-  //console.log('Your Score: ', snakeLengthMax)
-  //console.log(updateHighScores(snakeLengthMax))
-  //console.log(updateHighScores(snakeLengthMax))
-  //console.log('All Time Highs: ', localStorage.getItem('NyliraGameSnake'))
+  console.log('Your Score: ', snakeLengthMax)
+  console.log(updateHighScores(snakeLengthMax))
+  console.log('All Time Highs: ', localStorage.getItem('NyliraGameSnake'))
 
   updateHighScores(snakeLengthMax)
 
