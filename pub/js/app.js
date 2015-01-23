@@ -1,4 +1,9 @@
 'use strict'
+// TODO: create touch controls
+// TODO: change display depending on user's screen
+// TODO: text element polish
+// TODO: colors for the Game page
+
 // libraries
 var P = require('pixi.js')
 var _ = require('lodash')
