@@ -163,13 +163,6 @@ function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
 
-  // stop snake movement if game is paused
-  // if game is running for first time, set initial snakeMovement to random value
-  // if game is unpaused, set snakeMovement to previous movement value value
-
-
-
-
   // btnResume
   if(GAME_RUNNING === true && GAME_PAUSED === true) {
     btnResume.alpha = 1.0
@@ -178,6 +171,7 @@ function update(){
       sceneMenu.visible = false
       sceneGame.visible = true
       GAME_PAUSED = false
+      toggleSnakeMovement()
     }
   } else {
     btnResume.alpha = 0.5
