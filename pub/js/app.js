@@ -268,7 +268,7 @@ function update(){
   requestAnimationFrame(update);
 
   // btnAgain
-  if(GAME_RUNNING === false && GAME_PAUSED === true) {
+  if(sceneSummary.visible === true && GAME_RUNNING === false && GAME_PAUSED === true) {
     btnAgain.click = function() {
       sceneSummary.visible = false
       sceneGame.visible = true
@@ -277,40 +277,42 @@ function update(){
     }
   }
 
-  // btnResume
-  if(GAME_RUNNING === true && GAME_PAUSED === true) {
-    btnResume.alpha = 1.0
-    btnResume.click = function() {
-      console.log('you clicked Resume Game')
-      sceneMenu.visible = false
-      sceneGame.visible = true
-      GAME_PAUSED = false
-      toggleSnakeMovement()
-    }
-  } else {
-    btnResume.alpha = 0.25
-    btnResume.click = function() {
-      console.error('No game is running right now')
-    }
-  } 
+  if(sceneMenu.visible === true) {
+    // btnResume
+    if(GAME_RUNNING === true && GAME_PAUSED === true){
+      btnResume.alpha = 1.0
+      btnResume.click = function() {
+        console.log('you clicked Resume Game')
+        sceneMenu.visible = false
+        sceneGame.visible = true
+        GAME_PAUSED = false
+        toggleSnakeMovement()
+      }
+    } else {
+      btnResume.alpha = 0.25
+      btnResume.click = function() {
+        console.error('No game is running right now')
+      }
+    } 
 
-  // btnNew
-  if(GAME_RUNNING === true) {
-    btnNew.alpha = 0.25
-    btnNew.click = function() {
-      console.error('A game is already running')
-    }
-  } else {
-    btnNew.alpha = 1.0
-    btnNew.click = function() {
-      sceneMenu.visible = false
-      sceneGame.visible = true
-      startGame()
-      //console.log('Starting a new game')
+    // btnNew
+    if(GAME_RUNNING === true) {
+      btnNew.alpha = 0.25
+      btnNew.click = function() {
+        console.error('A game is already running')
+      }
+    } else {
+      btnNew.alpha = 1.0
+      btnNew.click = function() {
+        sceneMenu.visible = false
+        sceneGame.visible = true
+        startGame()
+        //console.log('Starting a new game')
+      }
     }
   }
 
-  if(GAME_RUNNING === true && GAME_PAUSED === false) {
+  if(sceneGame.visible === true && GAME_RUNNING === true && GAME_PAUSED === false) {
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
       randomCube = spawnRandomSprite(sceneGame, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
@@ -328,7 +330,7 @@ function update(){
     })
 
     // if snake[0] collides with itself
-    if(_.some(snakeTailPositions, [snake[0].position.x, snake[0].position.y])) {
+    if(snake.length > 0 && _.some(snakeTailPositions, [snake[0].position.x, snake[0].position.y])) {
       // end the game
       endGame()
     }
