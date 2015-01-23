@@ -110,11 +110,10 @@ function preload() {
 function initSceneMenu() {
   sceneMenu.width = MAP_X
   sceneMenu.height = MAP_Y
-  console.log('renderer.width: ', renderer.width)
   // logo
   var logoTextStyle = {
     font: 'bold 128px Arial'
-  , fill: '#000000'
+  , fill: '#0077bb'
   , dropShadow: true
   , dropShadowColor: '#003366'
   , dropShadowDistance: 5
