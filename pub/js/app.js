@@ -44,7 +44,9 @@ var sceneGame
   , cube
   , cube1
   , cube2
-  , tiles
+
+var tiles
+  , bgTiles
 
 var sceneSummary
 
@@ -52,6 +54,7 @@ var tileTexture
   , cubeTexture
   , redTexture
   , btnTexture
+  , bgTileTexture
 
 // this run no matter what scene is loaded
 function preload() {
@@ -89,15 +92,18 @@ function preload() {
     cubeTexture = P.Texture.fromImage('../img/block16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256@x2.png')
+    bgTileTexture = P.Texture.fromImage('../img/bg8x512@x2.png')
   } else {
     tileTexture = P.Texture.fromImage('../img/grid16x16.png')
     cubeTexture = P.Texture.fromImage('../img/block16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256.png')
+    bgTileTexture = P.Texture.fromImage('../img/bg8x512.png')
   }
 
   // setup sprites
   tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_X)
+  bgTiles = new P.TilingSprite(bgTileTexture, MAP_X, MAP_X)
   cube = new P.Sprite(cubeTexture)
   cube1 = new P.Sprite(cubeTexture)
   cube2 = new P.Sprite(cubeTexture)
@@ -105,38 +111,36 @@ function preload() {
 
 function initSceneMenu() {
   // background
-  sceneMenu.addChild(tiles)
+  sceneMenu.addChild(bgTiles)
 
   // logo
   var logoTextStyle = {
     font: 'bold 128px Arial'
-  , fill: '#0077bb'
+  , fill: 'hsla(38,100%,100%,1.0)'
   , dropShadow: true
-  , dropShadowColor: '#003366'
-  , dropShadowDistance: 5
+  , dropShadowColor: 'hsla(0,0%,0%,0.5)'
+  , dropShadowDistance: 10
   }
   var logoText = new P.Text('Snake', logoTextStyle)
   logoText.position.x = (renderer.width - logoText.width) /2
-  logoText.position.y = 96
+  logoText.position.y = 128
   sceneMenu.addChild(logoText)
 
   // input
   var inputTextStyle = {
     font: '32px Arial'
-  , fill: '#000000'
-  , dropShadow: true
-  , dropShadowColor: '#0099dd'
-  , dropShadowDistance: 2
+  , fill: '#4782ad'
+  , dropShadow: false
   }
   var inputText = new P.Text('Controls: Arrow Keys or WASD (Spacebar to Pause)', inputTextStyle)
   inputText.position.x = (renderer.width - inputText.width) /2
-  inputText.position.y = 800
+  inputText.position.y = 896
   sceneMenu.addChild(inputText)
 
   // button group
   var sceneMenuButtons = new P.DisplayObjectContainer()
   sceneMenuButtons.x = 256
-  sceneMenuButtons.y = 352
+  sceneMenuButtons.y = 416
   sceneMenu.addChild(sceneMenuButtons)
 
   // buttons
