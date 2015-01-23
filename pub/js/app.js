@@ -73,6 +73,7 @@ function preload() {
     highScores = _.sortBy(highScores, function(num) {return num}).reverse()
     console.log('highScores retrieved from localStorage: ', highScores)
   } else {
+    highScores = []
     console.log('No high scores in local storage yet. Add some!')
   }
 
@@ -372,8 +373,6 @@ function endGame() {
   console.log('Your Score: ', snakeLengthMax)
   console.log(updateHighScores(snakeLengthMax))
   console.log('All Time Highs: ', localStorage.getItem('NyliraGameSnake'))
-
-  updateHighScores(snakeLengthMax)
 
   initSceneSummary()
   sceneGame.visible = false
