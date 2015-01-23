@@ -133,6 +133,7 @@ function Button(text, textStyle, texture, x, y, width, height) {
 
   button.addChild(label)
   label.position.x = (button.width - label.width) / 2
+  label.position.y = (button.height - label.height) / 2
 
   return button
 }
