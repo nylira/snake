@@ -81,9 +81,9 @@ function preload() {
   stage.addChild(sceneMenu)
   stage.addChild(sceneGame)
   stage.addChild(sceneSummary)
-  sceneMenu.visible = false
+  sceneMenu.visible = true
   sceneGame.visible = false
-  sceneSummary.visible = true
+  sceneSummary.visible = false
 
   // setup textures
   var pixelRatio = window.devicePixelRatio;
@@ -188,21 +188,7 @@ function initSceneSummary() {
   // background
   sceneSummary.addChild(bgTiles)
 
-  // high scores display
-  var highScoresContainer = new P.DisplayObjectContainer()
-    var scoreTextStyle = {
-      font: '300 128px "Helvetica Neue", Arial, Helvetica, sans-serif'
-    , fill: 'hsla(38,100%,100%,0.75)'
-    , dropShadow: true
-    , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-    , dropShadowDistance: 6
-    }
-  _.map(highScores, function(score) {
-    var scoreText = new P.Text(score, scoreTextStyle)
-    highScoresContainer.addChild(scoreText)
-  })
-
-  // game over text
+  // game over title
   var gameOverTextStyle = {
     font: '300 128px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
@@ -212,22 +198,78 @@ function initSceneSummary() {
   }
   var gameOverText = new P.Text('Game Over', gameOverTextStyle)
   gameOverText.position.x = (renderer.width - gameOverText.width) /2
-  gameOverText.position.y = 128
-
+  gameOverText.position.y = 96
   sceneSummary.addChild(gameOverText)
 
-  sceneSummary.addChild(highScoresContainer)
-}
+  // points text
+  var pointsTextStyle = {
+    font: 'bold 48px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsla(38,100%,100%,0.75)'
+  , dropShadow: true
+  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
+  , dropShadowDistance: 6
+  }
+  var pointsTextString = 'You scored ' + String(snakeLengthMax) + ' pts!'
+  var pointsText = new P.Text(pointsTextString, pointsTextStyle)
+  pointsText.position.x = (renderer.width - pointsText.width) /2
+  pointsText.position.y = gameOverText.y + 128 + 16
+  sceneSummary.addChild(pointsText)
 
-function initialize(){
-  initSceneMenu()
-  initSceneGame()
-  initSceneSummary()
+  // high scores label
+  var highScoresLabelTextStyle = {
+    font: 'bold 32px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsla(38,100%,100%,0.75)'
+  , dropShadow: true
+  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
+  , dropShadowDistance: 6
+  }
+  var highScoresLabelText = new P.Text('Your High Scores', highScoresLabelTextStyle)
+  highScoresLabelText.position.x = (renderer.width - highScoresLabelText.width) /2
+  highScoresLabelText.position.y = pointsText.y + 128
+  sceneSummary.addChild(highScoresLabelText)
+
+  // high scores display
+  var highScoresContainer = new P.DisplayObjectContainer()
+  var scoreTextStyle = {
+    font: '32px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsla(38,100%,100%,0.75)'
+  , dropShadow: true
+  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
+  , dropShadowDistance: 6
+  }
+
+  for(var i=0; i < 5; i++) {
+    var scoreTextX = 128
+    var scoreTextY = highScoresLabelText.y + 64
+    var scoreText = new P.Text(highScores[i] + ' pts ', scoreTextStyle)
+    scoreText.position.x = (renderer.width - scoreText.width) /2
+    scoreText.position.y = scoreTextY + scoreText.height * i
+    highScoresContainer.addChild(scoreText)
+  }
+
+  // button
+  btnAgain = new Button('Play Again', btnTexture)
+  btnAgain.position.x = (renderer.width - btnAgain.width) / 2
+  btnAgain.position.y = 32 * 24
+  sceneSummary.addChild(btnAgain)
+
+  sceneSummary.addChild(highScoresContainer)
 }
 
 function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
+
+  // btnAgain
+  if(GAME_RUNNING === false && GAME_PAUSED === true) {
+    btnAgain.click = function() {
+      console.log('You\'re starting a new game!')
+      sceneSummary.visible = false
+      sceneGame.visible = true
+      GAME_PAUSED = false
+      startGame()
+    }
+  }
 
   // btnResume
   if(GAME_RUNNING === true && GAME_PAUSED === true) {
@@ -258,7 +300,7 @@ function update(){
       sceneMenu.visible = false
       sceneGame.visible = true
       startGame()
-      console.log('Starting a new game')
+      //console.log('Starting a new game')
     }
   }
 
@@ -319,13 +361,16 @@ function endGame() {
   snake = []
 
   // update high scores
-  console.log('Your Score: ', snakeLengthMax)
-  console.log(updateHighScores(snakeLengthMax))
-  console.log('All Time Highs: '
-  , localStorage.getItem('NyliraGameSnake'))
+  //console.log('Your Score: ', snakeLengthMax)
+  //console.log(updateHighScores(snakeLengthMax))
+  //console.log(updateHighScores(snakeLengthMax))
+  //console.log('All Time Highs: ', localStorage.getItem('NyliraGameSnake'))
 
-  sceneMenu.visible = true
+  updateHighScores(snakeLengthMax)
+
+  initSceneSummary()
   sceneGame.visible = false
+  sceneSummary.visible = true
 }
 
 function startGame(){
@@ -377,5 +422,4 @@ function toggleSnakeMovement() {
 
 preload()
 initSceneMenu()
-initSceneSummary()
 update()
