@@ -9,16 +9,17 @@ var combokeys = new Combokeys(document)
 var randomPosition = require('./helpers/randomPosition')
 var stayInBounds = require('./helpers/stayInBounds')
 var chainFlow = require('./helpers/chainFlow')
+var Button = require('./helpers/Button')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 
 // constants
 var MAP_X = 1024
 var MAP_Y = 1024
 var GRID_UNIT = 32
-var GAME_PAUSED = true
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
-var GAME_IN_BACKGROUND = false
+var GAME_PAUSED = false
+var GAME_RUNNING = false
 
 // player variables
 var snakeMovement = null
@@ -106,42 +107,15 @@ function preload() {
   cube2 = new P.Sprite(cubeTexture)
 }
 
-function Button(text, textStyle, texture, x, y, width, height) {
-  text = text || 'Button Text'
-
-  textStyle = textStyle || {
-    font: 'bold 48px Arial'
-  , fill: '#FFFFFF'
-  , dropShadow: true
-  , dropShadowColor: '#003366'
-  , dropShadowDistance: 6
-  }
-
-  texture = texture || btnTexture
-  x = x || 0
-  y = y || 0
-  width = width || 512
-  height = height || 128
-
-  var btn = new P.Sprite(texture)
-  btn.width = width
-  btn.height = height
-  btn.interactive = true
-
-  var label = new P.Text(text, textStyle)
-
-  btn.addChild(label)
-  label.position.x = (btn.width - label.width) / 2
-  label.position.y = (btn.height - label.height) / 2
-
-  return btn
-}
 
 function initSceneMenu() {
-  btnNew = new Button('New Game')
-  btnResume = new Button('Resume Game')
+  // logo
 
+  // buttons
+  btnNew = new Button('New Game', btnTexture)
   btnNew.position.y = 0
+
+  btnResume = new Button('Resume Game', btnTexture)
   btnResume.position.y = 64 + 128
 
   sceneMenuButtons.x = 256
@@ -160,7 +134,13 @@ function initSceneGame() {
   combokeys.bind(['down','s'], function() {snakeMovement = 's'})
   combokeys.bind(['left','a'], function() {snakeMovement = 'e'})
   combokeys.bind(['right','d'], function() {snakeMovement = 'w'})
-  combokeys.bind(['space','x'], function() {snakeMovement = null})
+
+  combokeys.bind(['space','x'], function() {
+    snakeMovement = null
+    sceneMenu.visible = true
+    sceneGame.visible = false
+    GAME_PAUSED = true
+  })
 
   // setup bg
   sceneGame.addChild(tiles)
@@ -184,7 +164,7 @@ function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
 
-  if(GAME_IN_BACKGROUND === true) {
+  if(GAME_RUNNING === true && GAME_PAUSED === true) {
     btnResume.alpha = 1.0
     btnResume.click = function() {
       console.log('you clicked Resume Game')
@@ -199,11 +179,17 @@ function update(){
   btnNew.click = function() {
     sceneMenu.visible = false
     sceneGame.visible = true
-    startGame()
+    GAME_PAUSED = false
+    if(GAME_RUNNING === true) {
+      endGame()
+    } else {
+      resetGame()
+    }
     console.log('you clicked New Game')
+    
   }
 
-  if(GAME_PAUSED !== true) {
+  if(GAME_RUNNING === true && GAME_PAUSED === false) {
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
       randomCube = spawnRandomSprite(sceneGame, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
@@ -248,7 +234,7 @@ function update(){
 
 function endGame() {
   // pauses the game and shows the scoreboard, play again btn
-  GAME_PAUSED = true
+  GAME_RUNNING = false
   combokeys.reset()
   snakeMovement = null
   resetGame()
@@ -304,7 +290,7 @@ function sortDescending(intArray) {
 }
   
 function startGame(){
-  GAME_PAUSED = false
+  GAME_RUNNING = true
   initSceneGame()
   update()
 }

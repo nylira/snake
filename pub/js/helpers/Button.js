@@ -1,7 +1,9 @@
 P = require('pixi.js')
 
-function Button(text, textStyle, texture, x, y, width, height) {
+function Button(text, texture, textStyle, x, y, width, height) {
   text = text || 'Button Text'
+
+  texture = texture || btnTexture
 
   textStyle = textStyle || {
     font: 'bold 48px Arial'
@@ -11,7 +13,6 @@ function Button(text, textStyle, texture, x, y, width, height) {
   , dropShadowDistance: 6
   }
 
-  texture = texture || btnTexture
   x = x || 0
   y = y || 0
   width = width || 512
