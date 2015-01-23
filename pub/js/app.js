@@ -45,10 +45,11 @@ var sceneGame
   , cube1
   , cube2
 
+var sceneSummary
+  , btnAgain
+
 var tiles
   , bgTiles
-
-var sceneSummary
 
 var tileTexture
   , cubeTexture
@@ -80,9 +81,9 @@ function preload() {
   stage.addChild(sceneMenu)
   stage.addChild(sceneGame)
   stage.addChild(sceneSummary)
-  sceneMenu.visible = true
+  sceneMenu.visible = false
   sceneGame.visible = false
-  sceneSummary.visible = false
+  sceneSummary.visible = true
 
   // setup textures
   var pixelRatio = window.devicePixelRatio;
@@ -181,6 +182,47 @@ function initSceneGame() {
   snake.push(cube)
   sceneGame.addChild(cube)
   snakeLengthMax = 1
+}
+
+function initSceneSummary() {
+  // background
+  sceneSummary.addChild(bgTiles)
+
+  // high scores display
+  var highScoresContainer = new P.DisplayObjectContainer()
+    var scoreTextStyle = {
+      font: '300 128px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    , fill: 'hsla(38,100%,100%,0.75)'
+    , dropShadow: true
+    , dropShadowColor: 'hsla(0,0%,0%,0.3)'
+    , dropShadowDistance: 6
+    }
+  _.map(highScores, function(score) {
+    var scoreText = new P.Text(score, scoreTextStyle)
+    highScoresContainer.addChild(scoreText)
+  })
+
+  // game over text
+  var gameOverTextStyle = {
+    font: '300 128px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsla(38,100%,100%,0.75)'
+  , dropShadow: true
+  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
+  , dropShadowDistance: 6
+  }
+  var gameOverText = new P.Text('Game Over', gameOverTextStyle)
+  gameOverText.position.x = (renderer.width - gameOverText.width) /2
+  gameOverText.position.y = 128
+
+  sceneSummary.addChild(gameOverText)
+
+  sceneSummary.addChild(highScoresContainer)
+}
+
+function initialize(){
+  initSceneMenu()
+  initSceneGame()
+  initSceneSummary()
 }
 
 function update(){
@@ -335,4 +377,5 @@ function toggleSnakeMovement() {
 
 preload()
 initSceneMenu()
+initSceneSummary()
 update()
