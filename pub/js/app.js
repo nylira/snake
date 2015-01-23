@@ -115,10 +115,10 @@ function initSceneMenu() {
 
   // logo
   var logoTextStyle = {
-    font: 'bold 128px Arial'
-  , fill: 'hsla(38,100%,100%,1.0)'
+    font: '300 160px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsla(38,100%,100%,0.66)'
   , dropShadow: true
-  , dropShadowColor: 'hsla(0,0%,0%,0.5)'
+  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
   , dropShadowDistance: 10
   }
   var logoText = new P.Text('Snake', logoTextStyle)
@@ -198,7 +198,7 @@ function update(){
       toggleSnakeMovement()
     }
   } else {
-    btnResume.alpha = 0.5
+    btnResume.alpha = 0.25
     btnResume.click = function() {
       console.error('No game is running right now')
     }
@@ -206,7 +206,7 @@ function update(){
 
   // btnNew
   if(GAME_RUNNING === true) {
-    btnNew.alpha = 0.5
+    btnNew.alpha = 0.25
     btnNew.click = function() {
       console.error('A game is already running')
     }
