@@ -18,6 +18,7 @@ var GRID_UNIT = 32
 var GAME_PAUSED = true
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
+var GAME_IN_BACKGROUND = false
 
 // player variables
 var snakeMovement = null
@@ -35,13 +36,11 @@ var stage, renderer
 // scenes
 var sceneMenu
   , sceneMenuButtons
-  , buttonOne
-  , buttonTwo
-  , buttonThree
-  , buttonOneText
-  , buttonTwoText
-  , buttonThreeText
-  , buttonTextStyle
+  , btnResume
+  , btnNew
+  , btnResumeText
+  , btnNewText
+  , btnTextStyle
 
 var sceneGame
   , cube
@@ -54,7 +53,7 @@ var sceneSummary
 var tileTexture
   , cubeTexture
   , redTexture
-  , buttonTexture
+  , btnTexture
 
 // this run no matter what scene is loaded
 function preload() {
@@ -92,12 +91,12 @@ function preload() {
     tileTexture = P.Texture.fromImage('../img/grid16x16@x2.png')
     cubeTexture = P.Texture.fromImage('../img/block16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
-    buttonTexture = P.Texture.fromImage('../img/button64x256@x2.png')
+    btnTexture = P.Texture.fromImage('../img/btn64x256@x2.png')
   } else {
     tileTexture = P.Texture.fromImage('../img/grid16x16.png')
     cubeTexture = P.Texture.fromImage('../img/block16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
-    buttonTexture = P.Texture.fromImage('../img/button64x256.png')
+    btnTexture = P.Texture.fromImage('../img/btn64x256.png')
   }
 
   // setup sprites
@@ -118,51 +117,38 @@ function Button(text, textStyle, texture, x, y, width, height) {
   , dropShadowDistance: 6
   }
 
-  texture = texture || buttonTexture
+  texture = texture || btnTexture
   x = x || 0
   y = y || 0
   width = width || 512
   height = height || 128
 
-  var button = new P.Sprite(texture)
-  button.width = width
-  button.height = height
-  button.interactive = true
+  var btn = new P.Sprite(texture)
+  btn.width = width
+  btn.height = height
+  btn.interactive = true
 
   var label = new P.Text(text, textStyle)
 
-  button.addChild(label)
-  label.position.x = (button.width - label.width) / 2
-  label.position.y = (button.height - label.height) / 2
+  btn.addChild(label)
+  label.position.x = (btn.width - label.width) / 2
+  label.position.y = (btn.height - label.height) / 2
 
-  return button
+  return btn
 }
 
 function initSceneMenu() {
-  buttonOne = new Button('Resume Game')
-  buttonTwo = new Button('New Game')
-  buttonThree = new Button('High Scores')
+  btnNew = new Button('New Game')
+  btnResume = new Button('Resume Game')
 
-  buttonOne.click = function() {
-    console.log('you clicked Resume Game')
-  }
-  buttonTwo.click = function() {
-    console.log('you clicked New Game')
-  }
-  buttonThree.click = function() {
-    console.log('you clicked High Scores')
-  }
-
-  buttonOne.position.y = 0
-  buttonTwo.position.y = 64 + 128
-  buttonThree.position.y = 64 + 128 + 64 + 128
+  btnNew.position.y = 0
+  btnResume.position.y = 64 + 128
 
   sceneMenuButtons.x = 256
   sceneMenuButtons.y = 256
 
-  sceneMenuButtons.addChild(buttonOne)
-  sceneMenuButtons.addChild(buttonTwo)
-  sceneMenuButtons.addChild(buttonThree)
+  sceneMenuButtons.addChild(btnResume)
+  sceneMenuButtons.addChild(btnNew)
 
   sceneMenu.addChild(tiles)
   sceneMenu.addChild(sceneMenuButtons)
@@ -197,6 +183,25 @@ function initSceneGame() {
 function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
+
+  if(GAME_IN_BACKGROUND === true) {
+    btnResume.alpha = 1.0
+    btnResume.click = function() {
+      console.log('you clicked Resume Game')
+    }
+  } else {
+    btnResume.alpha = 0.5
+    btnResume.click = function() {
+      console.error('No game is running right now')
+    }
+  } 
+
+  btnNew.click = function() {
+    sceneMenu.visible = false
+    sceneGame.visible = true
+    startGame()
+    console.log('you clicked New Game')
+  }
 
   if(GAME_PAUSED !== true) {
     // spawn a random cube if one doesn't exist
@@ -242,7 +247,7 @@ function update(){
 }
 
 function endGame() {
-  // pauses the game and shows the scoreboard, play again button
+  // pauses the game and shows the scoreboard, play again btn
   GAME_PAUSED = true
   combokeys.reset()
   snakeMovement = null
@@ -307,11 +312,3 @@ function startGame(){
 preload()
 initSceneMenu()
 update()
-
-/*
-var playButton = document.getElementById('play-button')
-playButton.addEventListener('click', function() {
-  startGame()
-  playButton.style.display = 'none'
-})
-*/
