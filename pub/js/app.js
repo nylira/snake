@@ -136,10 +136,11 @@ function initSceneGame() {
   combokeys.bind(['left','a'], function() {snakeMovement = 'e'})
   combokeys.bind(['right','d'], function() {snakeMovement = 'w'})
 
+  // toggle for game pause
   combokeys.bind(['space','esc', 'x'], function() {
-    sceneMenu.visible = true
-    sceneGame.visible = false
-    GAME_PAUSED = true
+    sceneMenu.visible = !sceneMenu.visible
+    sceneGame.visible = !sceneGame.visible
+    GAME_PAUSED = !GAME_PAUSED
   })
 
   // setup bg
@@ -161,6 +162,9 @@ function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
 
+  // stop snake movement if game is paused
+  // if game is running for first time, set initial snakeMovement to random value
+  // if game is unpaused, set snakeMovement to previous movement value value
   if(GAME_PAUSED === true) {
     snakeMovementLast = snakeMovement
     snakeMovement = null
