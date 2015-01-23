@@ -116,10 +116,10 @@ function initSceneMenu() {
   // logo
   var logoTextStyle = {
     font: '300 160px "Helvetica Neue", Arial, Helvetica, sans-serif'
-  , fill: 'hsla(38,100%,100%,0.66)'
+  , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 10
+  , dropShadowDistance: 8
   }
   var logoText = new P.Text('Snake', logoTextStyle)
   logoText.position.x = (renderer.width - logoText.width) /2

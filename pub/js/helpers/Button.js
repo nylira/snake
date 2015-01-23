@@ -22,6 +22,12 @@ function Button(text, texture, textStyle, x, y, width, height) {
   btn.width = width
   btn.height = height
   btn.interactive = true
+  btn.buttonMode = true
+
+  btn.mouseover = function() {
+  }
+  btn.mouseout = function() {
+  }
 
   var label = new P.Text(text, textStyle)
 
