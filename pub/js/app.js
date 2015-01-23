@@ -40,9 +40,7 @@ var sceneMenu
   , sceneMenuButtons
   , btnResume
   , btnNew
-  , btnResumeText
-  , btnNewText
-  , btnTextStyle
+  , logoText
 
 var sceneGame
   , cube
@@ -110,22 +108,36 @@ function preload() {
 
 
 function initSceneMenu() {
+  sceneMenu.width = MAP_X
+  sceneMenu.height = MAP_Y
+  console.log('renderer.width: ', renderer.width)
   // logo
+  var logoTextStyle = {
+    font: 'bold 128px Arial'
+  , fill: '#000000'
+  , dropShadow: true
+  , dropShadowColor: '#003366'
+  , dropShadowDistance: 5
+  }
+  var logoText = new P.Text('Snake', logoTextStyle)
+  logoText.position.x = (renderer.width - logoText.width) /2
+  logoText.position.y = 96
 
   // buttons
   btnNew = new Button('New Game', btnTexture)
   btnNew.position.y = 0
 
   btnResume = new Button('Resume Game', btnTexture)
-  btnResume.position.y = 64 + 128
+  btnResume.position.y = 32 + btnNew.height
 
   sceneMenuButtons.x = 256
-  sceneMenuButtons.y = 256
+  sceneMenuButtons.y = 352
 
   sceneMenuButtons.addChild(btnResume)
   sceneMenuButtons.addChild(btnNew)
 
   sceneMenu.addChild(tiles)
+  sceneMenu.addChild(logoText)
   sceneMenu.addChild(sceneMenuButtons)
 }
 
