@@ -107,14 +107,40 @@ function preload() {
   cube2 = new P.Sprite(cubeTexture)
 }
 
-function initSceneMenu() {
-  buttonOne = new P.Sprite(buttonTexture)
-  buttonTwo = new P.Sprite(buttonTexture)
-  buttonThree = new P.Sprite(buttonTexture)
+function Button(text, textStyle, texture, x, y, width, height) {
+  text = text || 'Button Text'
 
-  buttonOne.interactive = true
-  buttonTwo.interactive = true
-  buttonThree.interactive = true
+  textStyle = textStyle || {
+    font: 'bold 48px Arial'
+  , fill: '#FFFFFF'
+  , dropShadow: true
+  , dropShadowColor: '#003366'
+  , dropShadowDistance: 6
+  }
+
+  texture = texture || buttonTexture
+  x = x || 0
+  y = y || 0
+  width = width || 512
+  height = height || 128
+
+  var button = new P.Sprite(texture)
+  button.width = width
+  button.height = height
+  button.interactive = true
+
+  var label = new P.Text(text, textStyle)
+
+  button.addChild(label)
+  label.position.x = (button.width - label.width) / 2
+
+  return button
+}
+
+function initSceneMenu() {
+  buttonOne = new Button('Resume Game')
+  buttonTwo = new Button('New Game')
+  buttonThree = new Button('High Scores')
 
   buttonOne.click = function() {
     console.log('you clicked Resume Game')
@@ -130,24 +156,9 @@ function initSceneMenu() {
   buttonTwo.position.y = 64 + 128
   buttonThree.position.y = 64 + 128 + 64 + 128
 
-  buttonTextStyle = {
-    font: 'bold 48px Arial'
-  , fill: '#FFFFFF'
-  , align: 'center'
-  , dropShadow: true
-  , dropShadowColor: '#003366'
-  , dropShadowDistance: 6
-  }
-
-  buttonOneText = new P.Text('Resume Game', buttonTextStyle)
-  buttonOne.addChild(buttonOneText)
-  buttonTwoText = new P.Text('New Game', buttonTextStyle)
-  buttonTwo.addChild(buttonTwoText)
-  buttonThreeText = new P.Text('High Scores', buttonTextStyle)
-  buttonThree.addChild(buttonThreeText)
-
   sceneMenuButtons.x = 256
   sceneMenuButtons.y = 256
+
   sceneMenuButtons.addChild(buttonOne)
   sceneMenuButtons.addChild(buttonTwo)
   sceneMenuButtons.addChild(buttonThree)
