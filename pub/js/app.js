@@ -72,6 +72,7 @@ function preload() {
   stage = new P.Stage(0xCCD0CC)
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
   document.getElementById('container').appendChild(renderer.view);
+  stage.interactive = true // make it clickable
 
   sceneMenu = new P.DisplayObjectContainer()
   sceneMenuButtons = new P.DisplayObjectContainer()
@@ -110,6 +111,20 @@ function initSceneMenu() {
   buttonOne = new P.Sprite(buttonTexture)
   buttonTwo = new P.Sprite(buttonTexture)
   buttonThree = new P.Sprite(buttonTexture)
+
+  buttonOne.interactive = true
+  buttonTwo.interactive = true
+  buttonThree.interactive = true
+
+  buttonOne.click = function() {
+    console.log('you clicked Resume Game')
+  }
+  buttonTwo.click = function() {
+    console.log('you clicked New Game')
+  }
+  buttonThree.click = function() {
+    console.log('you clicked High Scores')
+  }
 
   buttonOne.position.y = 0
   buttonTwo.position.y = 64 + 128
