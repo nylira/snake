@@ -246,7 +246,13 @@ function initSceneSummary() {
   , dropShadowDistance: 6
   }
 
-  for(var i=0; i < 5; i++) {
+  var scoresToShow
+  if(highScores.length > 5) {
+    scoresToShow = 5
+  } else {
+    scoresToShow = highScores.length
+  }
+  for(var i=0; i < scoresToShow; i++) {
     var scoreTextX = 128
     var scoreTextY = highScoresLabelText.y + 64
     var scoreText = new P.Text(highScores[i] + ' pts ', scoreTextStyle)
