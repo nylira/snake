@@ -5,12 +5,14 @@
 // TODO: colors for the Game page: gradients, etc
 // TODO: particle effects
 // TODO: add message when new high score is achieved
+// TODO: sounds
 
 // libraries
 var P = require('pixi.js')
 var _ = require('lodash')
 var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
+var Howl = require('howler').Howl
 
 // helpers
 var randomPosition = require('./helpers/randomPosition')
@@ -38,6 +40,11 @@ var snakeLengthMax
 var randomCube = null
 var snakeDb
 var highScores
+
+// sounds
+var sfxPickup
+  , sfxGameOver
+  , sfxClickButton
 
 // stage variables
 var stage, renderer
@@ -92,6 +99,20 @@ function preload() {
   sceneMenu.visible = true
   sceneGame.visible = false
   sceneSummary.visible = false
+
+  // setup sounds
+  sfxPickup = new Howl({
+    urls: ['../sfx/pickup.wav']
+  , volume: 0.5
+  })
+  sfxGameOver = new Howl({
+    urls: ['../sfx/gameOver.wav']
+  , volume: 0.5
+  })
+  sfxClickButton = new Howl({
+    urls: ['../sfx/clickButton.wav']
+  , volume: 0.5
+  })
 
   // setup textures
   var pixelRatio = window.devicePixelRatio;
@@ -277,6 +298,7 @@ function update(){
   // btnAgain
   if(sceneSummary.visible === true && GAME_RUNNING === false && GAME_PAUSED === true) {
     btnAgain.click = function() {
+      sfxClickButton.play()
       sceneSummary.visible = false
       sceneGame.visible = true
       GAME_PAUSED = false
@@ -289,7 +311,8 @@ function update(){
     if(GAME_RUNNING === true && GAME_PAUSED === true){
       btnResume.alpha = 1.0
       btnResume.click = function() {
-        console.log('you clicked Resume Game')
+        sfxClickButton.play()
+        //console.log('you clicked Resume Game')
         sceneMenu.visible = false
         sceneGame.visible = true
         GAME_PAUSED = false
@@ -306,11 +329,13 @@ function update(){
     if(GAME_RUNNING === true) {
       btnNew.alpha = 0.25
       btnNew.click = function() {
+        sfxClickButton.play()
         console.error('A game is already running')
       }
     } else {
       btnNew.alpha = 1.0
       btnNew.click = function() {
+        sfxClickButton.play()
         sceneMenu.visible = false
         sceneGame.visible = true
         startGame()
@@ -344,6 +369,8 @@ function update(){
 
     // if snake[0] collides with the randomcube
     if (randomCube !== null && snake[0].position.x == randomCube.position.x && snake[0].position.y == randomCube.position.y) {
+      // play a sound
+      sfxPickup.play()
       // remove randomCube's visibility
       sceneGame.removeChild(randomCube)
       // destroy it
@@ -365,6 +392,8 @@ function update(){
 function endGame() {
   GAME_PAUSED = true
   GAME_RUNNING = false
+
+  sfxGameOver.play()
 
   combokeys.reset()
 
