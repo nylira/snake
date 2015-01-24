@@ -24,8 +24,8 @@ var Button = require('./helpers/Button')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 
 // constants
-var MAP_X = 512*R
-var MAP_Y = 512*R
+var MAP_X = 320*R
+var MAP_Y = 320*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
@@ -88,7 +88,7 @@ function preload() {
 
   // setup stage
   stage = new P.Stage(0xCCD0CC)
-  renderer = P.autoDetectRenderer(MAP_X, MAP_Y)
+  renderer = P.autoDetectRenderer(MAP_X, MAP_Y + 248*R)
   document.getElementById('container').appendChild(renderer.view);
   stage.interactive = true // make it clickable
 
@@ -134,6 +134,7 @@ function preload() {
   // setup sprites
   tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_X)
   bgTiles = new P.TilingSprite(bgTileTexture, MAP_X, MAP_X)
+  bgTiles.height = MAP_Y
   cube = new P.Sprite(cubeTexture)
   cube1 = new P.Sprite(cubeTexture)
   cube2 = new P.Sprite(cubeTexture)
@@ -169,7 +170,7 @@ function initSceneMenu() {
 
   // button group
   var sceneMenuButtons = new P.DisplayObjectContainer()
-  sceneMenuButtons.x = 128*R
+  sceneMenuButtons.x = (MAP_X - 256*R)/2
   sceneMenuButtons.y = 208*R
   sceneMenu.addChild(sceneMenuButtons)
 
