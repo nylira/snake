@@ -62,6 +62,10 @@ var sceneGame
   , cube
   , cube1
   , cube2
+  , btnUp
+  , btnRight
+  , btnLeft
+  , btnDown
 
 var sceneSummary
   , btnAgain
@@ -74,6 +78,7 @@ var tileTexture
   , redTexture
   , btnTexture
   , bgTileTexture
+  , arrowTexture
 
 // this run no matter what scene is loaded
 function preload() {
@@ -107,15 +112,15 @@ function preload() {
   // setup sounds
   sfxPickup = new Howl({
     urls: ['../sfx/pickup.wav']
-  , volume: 0.5
+  , volume: 0.05
   })
   sfxGameOver = new Howl({
     urls: ['../sfx/gameOver.wav']
-  , volume: 0.5
+  , volume: 0.05
   })
   sfxClickButton = new Howl({
     urls: ['../sfx/clickButton.wav']
-  , volume: 0.5
+  , volume: 0.05
   })
 
   // setup textures
@@ -125,12 +130,14 @@ function preload() {
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256@x2.png')
     bgTileTexture = P.Texture.fromImage('../img/bg32x568@x2.png')
+    arrowTexture = P.Texture.fromImage('../img/arrow256x256@x2.png')
   } else {
     tileTexture = P.Texture.fromImage('../img/darkGrid16x16.png')
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256.png')
     bgTileTexture = P.Texture.fromImage('../img/bg32x568.png')
+    arrowTexture = P.Texture.fromImage('../img/arrow256x256.png')
   }
 
   // setup sprites
@@ -140,6 +147,10 @@ function preload() {
   cube = new P.Sprite(cubeTexture)
   cube1 = new P.Sprite(cubeTexture)
   cube2 = new P.Sprite(cubeTexture)
+  btnUp = new P.Sprite(arrowTexture)
+  btnLeft = new P.Sprite(arrowTexture)
+  btnRight = new P.Sprite(arrowTexture)
+  btnDown = new P.Sprite(arrowTexture)
 }
 
 function initSceneMenu() {
@@ -189,11 +200,79 @@ function initSceneMenu() {
 }
 
 function initSceneGame() {
+  var navButtons = new P.DisplayObjectContainer()
+  navButtons.width = 62*3*R + 16*R
+  navButtons.height = 62*2*R + 8*R
+  navButtons.position.x = (CANVAS_X - navButtons.width) / 2
+  navButtons.position.y = 400*R + 16*R
+
   // keybindings
   combokeys.bind(['up', 'w'], function() {snakeMovement = 'n'})
   combokeys.bind(['down','s'], function() {snakeMovement = 's'})
   combokeys.bind(['left','a'], function() {snakeMovement = 'e'})
   combokeys.bind(['right','d'], function() {snakeMovement = 'w'})
+
+  btnUp.width = 62*R
+  btnUp.height = 62*R
+  btnUp.position.y = 31*R
+  btnUp.anchor = new P.Point(0.5, 0.5)
+  btnUp.interactive = true
+  btnUp.buttonMode = true
+  btnDown.tap = function() {
+    snakeMovement = 'n'
+  }
+  btnDown.click = function() {
+    snakeMovement = 'n'
+  }
+
+  btnDown.width = 62*R
+  btnDown.height = 62*R
+  btnDown.position.y = btnUp.position.y + btnUp.height + 8*R
+  btnDown.anchor = new P.Point(0.5, 0.5)
+  btnDown.rotation = Math.PI
+  btnDown.interactive = true
+  btnDown.buttonMode = true
+  btnDown.tap = function() {
+    snakeMovement = 's'
+  }
+  btnDown.click = function() {
+    snakeMovement = 's'
+  }
+
+  btnLeft.width = 62*R
+  btnLeft.height = 62*R
+  btnLeft.position.x = btnUp.position.x - btnUp.width - 8*R
+  btnLeft.position.y = btnUp.position.y + 31*R
+  btnLeft.anchor = new P.Point(0.5, 0.5)
+  btnLeft.rotation = Math.PI * 1.5
+  btnLeft.interactive = true
+  btnLeft.buttonMode = true
+  btnLeft.tap = function() {
+    snakeMovement = 'w'
+  }
+  btnLeft.click = function() {
+    snakeMovement = 'w'
+  }
+
+  btnRight.width = 62*R
+  btnRight.height = 62*R
+  btnRight.position.x = btnUp.position.x + btnUp.width + 8*R
+  btnRight.position.y = btnUp.position.y + 31*R
+  btnRight.anchor = new P.Point(0.5, 0.5)
+  btnRight.rotation = Math.PI * 0.5
+  btnRight.interactive = true
+  btnRight.buttonMode = true
+  btnRight.tap = function() {
+    snakeMovement = 'e'
+  }
+  btnRight.click = function() {
+    snakeMovement = 'e'
+  }
+
+  navButtons.addChild(btnUp)
+  navButtons.addChild(btnDown)
+  navButtons.addChild(btnLeft)
+  navButtons.addChild(btnRight)
 
   // toggle for game pause
   combokeys.bind(['space','esc', 'x'], function() {
@@ -216,6 +295,8 @@ function initSceneGame() {
   snake.push(cube)
   sceneGame.addChild(cube)
   snakeLengthMax = 1
+
+  sceneGame.addChild(navButtons)
 }
 
 function initSceneSummary() {
