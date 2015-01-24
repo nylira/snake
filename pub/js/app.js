@@ -25,7 +25,9 @@ var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 
 // constants
 var MAP_X = 320*R
-var MAP_Y = 320*R
+var MAP_Y = 400*R
+var CANVAS_X = 320*R
+var CANVAS_Y = 568*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
@@ -87,8 +89,8 @@ function preload() {
   }
 
   // setup stage
-  stage = new P.Stage(0xCCD0CC)
-  renderer = P.autoDetectRenderer(MAP_X, MAP_Y + 248*R)
+  stage = new P.Stage(0x141A1F)
+  renderer = P.autoDetectRenderer(CANVAS_X, CANVAS_Y)
   document.getElementById('container').appendChild(renderer.view);
   stage.interactive = true // make it clickable
 
@@ -122,19 +124,19 @@ function preload() {
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256@x2.png')
-    bgTileTexture = P.Texture.fromImage('../img/bg8x512@x2.png')
+    bgTileTexture = P.Texture.fromImage('../img/bg32x568@x2.png')
   } else {
     tileTexture = P.Texture.fromImage('../img/darkGrid16x16.png')
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256.png')
-    bgTileTexture = P.Texture.fromImage('../img/bg8x512.png')
+    bgTileTexture = P.Texture.fromImage('../img/bg32x568.png')
   }
 
   // setup sprites
-  tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_X)
-  bgTiles = new P.TilingSprite(bgTileTexture, MAP_X, MAP_X)
-  bgTiles.height = MAP_Y
+  tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_Y)
+  bgTiles = new P.TilingSprite(bgTileTexture, MAP_X, CANVAS_Y)
+  bgTiles.height = 568*R
   cube = new P.Sprite(cubeTexture)
   cube1 = new P.Sprite(cubeTexture)
   cube2 = new P.Sprite(cubeTexture)
@@ -220,7 +222,7 @@ function initSceneSummary() {
 
   // game over title
   var gameOverTextStyle = {
-    font: '300 '+ 64*R +'px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    font: '300 '+ 48*R +'px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
@@ -242,7 +244,7 @@ function initSceneSummary() {
   var pointsTextString = 'You scored ' + String(snakeLengthMax) + ' pts!'
   var pointsText = new P.Text(pointsTextString, pointsTextStyle)
   pointsText.position.x = (renderer.width - pointsText.width) /2
-  pointsText.position.y = gameOverText.y + 64*R + 8*R
+  pointsText.position.y = gameOverText.y + 64*R
   sceneSummary.addChild(pointsText)
 
   // high scores label
@@ -255,7 +257,7 @@ function initSceneSummary() {
   }
   var highScoresLabelText = new P.Text('Your High Scores', highScoresLabelTextStyle)
   highScoresLabelText.position.x = (renderer.width - highScoresLabelText.width) /2
-  highScoresLabelText.position.y = pointsText.y + 64*R
+  highScoresLabelText.position.y = pointsText.y + 80*R
   sceneSummary.addChild(highScoresLabelText)
 
   // high scores display
@@ -286,7 +288,7 @@ function initSceneSummary() {
   // button
   btnAgain = new Button('Play Again', btnTexture)
   btnAgain.position.x = (renderer.width - btnAgain.width) / 2
-  btnAgain.position.y = 16*R * 24
+  btnAgain.position.y = 32*R * 14
   sceneSummary.addChild(btnAgain)
 
   sceneSummary.addChild(highScoresContainer)
@@ -330,7 +332,6 @@ function update(){
     if(GAME_RUNNING === true) {
       btnNew.alpha = 0.25
       btnNew.click = function() {
-        sfxClickButton.play()
         console.error('A game is already running')
       }
     } else {
@@ -353,7 +354,7 @@ function update(){
     }
 
     // if the snake is out of bounds, end the game
-    if (stayInBounds(snake[0], MAP_X, MAP_Y) !== true) {
+    if (stayInBounds(snake[0], MAP_X, MAP_Y) === false) {
       endGame()
     }
 
