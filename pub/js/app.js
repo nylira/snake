@@ -88,6 +88,7 @@ function preload() {
 
   // setup stage
   stage = new P.Stage(0xCCD0CC)
+  console.log("renderOptions: ", renderOptions)
   renderer = P.autoDetectRenderer(MAP_X, MAP_Y, renderOptions)
   document.getElementById('container').appendChild(renderer.view);
   stage.interactive = true // make it clickable
@@ -117,9 +118,8 @@ function preload() {
   })
 
   // setup textures
-  var pixelRatio = window.devicePixelRatio;
-  var renderOptions = {resolution: pixelRatio}
-  if(pixelRatio === 2) {
+  var renderOptions = {resolution: R}
+  if(R === 2) {
     tileTexture = P.Texture.fromImage('../img/darkGrid16x16@x2.png')
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
