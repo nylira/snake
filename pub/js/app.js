@@ -28,7 +28,7 @@ var MAP_X = 512*R
 var MAP_Y = 512*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
-var REFRESH_RATE = 100//ms
+var REFRESH_RATE = 50//ms
 var GAME_PAUSED = false // used when a game is running and paused
 var GAME_RUNNING = false // used when a game is running
 
