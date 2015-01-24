@@ -156,10 +156,11 @@ function initSceneMenu() {
   }
   var logoText = new P.Text('Snake', logoTextStyle)
   logoText.position.x = (renderer.width - logoText.width) /2
-  logoText.position.y = 64*R
+  logoText.position.y = 128*R
   sceneMenu.addChild(logoText)
 
   // input
+  /*
   var inputTextStyle = {
     font: 16*R + 'px Arial'
   , fill: '#4782ad'
@@ -169,11 +170,12 @@ function initSceneMenu() {
   inputText.position.x = (renderer.width - inputText.width) /2
   inputText.position.y = 448*R
   sceneMenu.addChild(inputText)
+  */
 
   // button group
   var sceneMenuButtons = new P.DisplayObjectContainer()
   sceneMenuButtons.x = (MAP_X - 256*R)/2
-  sceneMenuButtons.y = 208*R
+  sceneMenuButtons.y = 32*R * 12
   sceneMenu.addChild(sceneMenuButtons)
 
   // buttons
