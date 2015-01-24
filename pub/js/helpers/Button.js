@@ -1,4 +1,5 @@
 P = require('pixi.js')
+R = window.devicePixelRatio
 
 function Button(text, texture, textStyle, x, y, width, height) {
   text = text || 'Button Text'
@@ -6,17 +7,17 @@ function Button(text, texture, textStyle, x, y, width, height) {
   texture = texture || btnTexture
 
   textStyle = textStyle || {
-    font: 'bold 48px Arial'
+    font: 'bold ' + 24*R + 'px Arial'
   , fill: '#FFFFFF'
   , dropShadow: true
   , dropShadowColor: '#003366'
-  , dropShadowDistance: 6
+  , dropShadowDistance: 3*R
   }
 
   x = x || 0
   y = y || 0
-  width = width || 512
-  height = height || 128
+  width = width || 256*R
+  height = height || 64*R
 
   var btn = new P.Sprite(texture)
   btn.width = width

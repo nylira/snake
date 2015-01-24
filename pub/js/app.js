@@ -6,6 +6,8 @@
 // TODO: particle effects
 // TODO: add message when new high score is achieved
 // TODO: sounds
+//
+var R = window.devicePixelRatio
 
 // libraries
 var P = require('pixi.js')
@@ -22,9 +24,9 @@ var Button = require('./helpers/Button')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 
 // constants
-var MAP_X = 1024
-var MAP_Y = 1024
-var GRID_UNIT = 32
+var MAP_X = 512*R
+var MAP_Y = 512*R
+var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 100//ms
 var GAME_PAUSED = false // used when a game is running and paused
@@ -145,32 +147,32 @@ function initSceneMenu() {
 
   // logo
   var logoTextStyle = {
-    font: '300 160px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    font: '300 '+ 80*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 8
+  , dropShadowDistance: 8*R
   }
   var logoText = new P.Text('Snake', logoTextStyle)
   logoText.position.x = (renderer.width - logoText.width) /2
-  logoText.position.y = 128
+  logoText.position.y = 64*R
   sceneMenu.addChild(logoText)
 
   // input
   var inputTextStyle = {
-    font: '32px Arial'
+    font: 16*R + 'px Arial'
   , fill: '#4782ad'
   , dropShadow: false
   }
   var inputText = new P.Text('Controls: Arrow Keys or WASD (Spacebar to Pause)', inputTextStyle)
   inputText.position.x = (renderer.width - inputText.width) /2
-  inputText.position.y = 896
+  inputText.position.y = 448*R
   sceneMenu.addChild(inputText)
 
   // button group
   var sceneMenuButtons = new P.DisplayObjectContainer()
-  sceneMenuButtons.x = 256
-  sceneMenuButtons.y = 416
+  sceneMenuButtons.x = 128*R
+  sceneMenuButtons.y = 208*R
   sceneMenu.addChild(sceneMenuButtons)
 
   // buttons
@@ -179,7 +181,7 @@ function initSceneMenu() {
   sceneMenuButtons.addChild(btnNew)
 
   btnResume = new Button('Resume Game', btnTexture)
-  btnResume.position.y = 32 + btnNew.height
+  btnResume.position.y = 16*R + btnNew.height
   sceneMenuButtons.addChild(btnResume)
 }
 
@@ -219,52 +221,52 @@ function initSceneSummary() {
 
   // game over title
   var gameOverTextStyle = {
-    font: '300 128px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    font: '300 '+ 64*R +'px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 6
+  , dropShadowDistance: 3*R
   }
   var gameOverText = new P.Text('Game Over', gameOverTextStyle)
   gameOverText.position.x = (renderer.width - gameOverText.width) /2
-  gameOverText.position.y = 96
+  gameOverText.position.y = 48*R
   sceneSummary.addChild(gameOverText)
 
   // points text
   var pointsTextStyle = {
-    font: 'bold 48px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    font: 'bold '+ 24*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 6
+  , dropShadowDistance: 3*R
   }
   var pointsTextString = 'You scored ' + String(snakeLengthMax) + ' pts!'
   var pointsText = new P.Text(pointsTextString, pointsTextStyle)
   pointsText.position.x = (renderer.width - pointsText.width) /2
-  pointsText.position.y = gameOverText.y + 128 + 16
+  pointsText.position.y = gameOverText.y + 64*R + 8*R
   sceneSummary.addChild(pointsText)
 
   // high scores label
   var highScoresLabelTextStyle = {
-    font: 'bold 32px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    font: 'bold '+ 16*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 6
+  , dropShadowDistance: 3*R
   }
   var highScoresLabelText = new P.Text('Your High Scores', highScoresLabelTextStyle)
   highScoresLabelText.position.x = (renderer.width - highScoresLabelText.width) /2
-  highScoresLabelText.position.y = pointsText.y + 128
+  highScoresLabelText.position.y = pointsText.y + 64*R
   sceneSummary.addChild(highScoresLabelText)
 
   // high scores display
   var highScoresContainer = new P.DisplayObjectContainer()
   var scoreTextStyle = {
-    font: '32px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    font: 16*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 6
+  , dropShadowDistance: 3*R
   }
 
   var scoresToShow
@@ -274,8 +276,8 @@ function initSceneSummary() {
     scoresToShow = highScores.length
   }
   for(var i=0; i < scoresToShow; i++) {
-    var scoreTextX = 128
-    var scoreTextY = highScoresLabelText.y + 64
+    var scoreTextX = 64*R
+    var scoreTextY = highScoresLabelText.y + 32*R
     var scoreText = new P.Text(highScores[i] + ' pts ', scoreTextStyle)
     scoreText.position.x = (renderer.width - scoreText.width) /2
     scoreText.position.y = scoreTextY + scoreText.height * i
@@ -285,7 +287,7 @@ function initSceneSummary() {
   // button
   btnAgain = new Button('Play Again', btnTexture)
   btnAgain.position.x = (renderer.width - btnAgain.width) / 2
-  btnAgain.position.y = 32 * 24
+  btnAgain.position.y = 16*R * 24
   sceneSummary.addChild(btnAgain)
 
   sceneSummary.addChild(highScoresContainer)
