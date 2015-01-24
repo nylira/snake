@@ -118,14 +118,14 @@ function preload() {
   var pixelRatio = window.devicePixelRatio;
   var renderOptions = {resolution: pixelRatio}
   if(pixelRatio === 2) {
-    tileTexture = P.Texture.fromImage('../img/grid16x16@x2.png')
-    cubeTexture = P.Texture.fromImage('../img/block16x16@x2.png')
+    tileTexture = P.Texture.fromImage('../img/darkGrid16x16@x2.png')
+    cubeTexture = P.Texture.fromImage('../img/lightBlock16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256@x2.png')
     bgTileTexture = P.Texture.fromImage('../img/bg8x512@x2.png')
   } else {
-    tileTexture = P.Texture.fromImage('../img/grid16x16.png')
-    cubeTexture = P.Texture.fromImage('../img/block16x16.png')
+    tileTexture = P.Texture.fromImage('../img/darkGrid16x16.png')
+    cubeTexture = P.Texture.fromImage('../img/lightBlock16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256.png')
     bgTileTexture = P.Texture.fromImage('../img/bg8x512.png')
