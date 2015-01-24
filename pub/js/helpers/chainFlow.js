@@ -8,8 +8,8 @@ function chainFlow(stage, chain, chainLengthMax, direction, texture, gridUnit) {
   switch(direction) {
     case 'n': offsetY = -gridUnit; break
     case 's': offsetY = gridUnit; break
-    case 'e': offsetX = -gridUnit; break
-    case 'w': offsetX = gridUnit; break
+    case 'e': offsetX = gridUnit; break
+    case 'w': offsetX = -gridUnit; break
     default: break
   }
   spawnChainedSprite(stage, chain, chainLengthMax, sprite, offsetX, offsetY)

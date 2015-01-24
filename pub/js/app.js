@@ -30,7 +30,7 @@ var CANVAS_X = 320*R
 var CANVAS_Y = 568*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
-var REFRESH_RATE = 100//ms
+var REFRESH_RATE = 150//ms
 var GAME_PAUSED = false // used when a game is running and paused
 var GAME_RUNNING = false // used when a game is running
 
@@ -49,6 +49,7 @@ var highScores
 var sfxPickup
   , sfxGameOver
   , sfxClickButton
+  , sfxClickButtonTwo
 
 // stage variables
 var stage, renderer
@@ -112,15 +113,19 @@ function preload() {
   // setup sounds
   sfxPickup = new Howl({
     urls: ['../sfx/pickup.wav']
-  , volume: 0.05
+  , volume: 0.5
   })
   sfxGameOver = new Howl({
     urls: ['../sfx/gameOver.wav']
-  , volume: 0.05
+  , volume: 0.5
   })
   sfxClickButton = new Howl({
     urls: ['../sfx/clickButton.wav']
-  , volume: 0.05
+  , volume: 0.5
+  })
+  sfxClickButtonTwo = new Howl({
+    urls: ['../sfx/clickButton2.wav']
+  , volume: 0.1
   })
 
   // setup textures
@@ -209,8 +214,8 @@ function initSceneGame() {
   // keybindings
   combokeys.bind(['up', 'w'], function() {snakeMovement = 'n'})
   combokeys.bind(['down','s'], function() {snakeMovement = 's'})
-  combokeys.bind(['left','a'], function() {snakeMovement = 'e'})
-  combokeys.bind(['right','d'], function() {snakeMovement = 'w'})
+  combokeys.bind(['right','d'], function() {snakeMovement = 'e'})
+  combokeys.bind(['left','a'], function() {snakeMovement = 'w'})
 
   btnUp.width = 62*R
   btnUp.height = 62*R
@@ -218,12 +223,6 @@ function initSceneGame() {
   btnUp.anchor = new P.Point(0.5, 0.5)
   btnUp.interactive = true
   btnUp.buttonMode = true
-  btnDown.tap = function() {
-    snakeMovement = 'n'
-  }
-  btnDown.click = function() {
-    snakeMovement = 'n'
-  }
 
   btnDown.width = 62*R
   btnDown.height = 62*R
@@ -232,12 +231,6 @@ function initSceneGame() {
   btnDown.rotation = Math.PI
   btnDown.interactive = true
   btnDown.buttonMode = true
-  btnDown.tap = function() {
-    snakeMovement = 's'
-  }
-  btnDown.click = function() {
-    snakeMovement = 's'
-  }
 
   btnLeft.width = 62*R
   btnLeft.height = 62*R
@@ -247,12 +240,6 @@ function initSceneGame() {
   btnLeft.rotation = Math.PI * 1.5
   btnLeft.interactive = true
   btnLeft.buttonMode = true
-  btnLeft.tap = function() {
-    snakeMovement = 'w'
-  }
-  btnLeft.click = function() {
-    snakeMovement = 'w'
-  }
 
   btnRight.width = 62*R
   btnRight.height = 62*R
@@ -262,12 +249,6 @@ function initSceneGame() {
   btnRight.rotation = Math.PI * 0.5
   btnRight.interactive = true
   btnRight.buttonMode = true
-  btnRight.tap = function() {
-    snakeMovement = 'e'
-  }
-  btnRight.click = function() {
-    snakeMovement = 'e'
-  }
 
   navButtons.addChild(btnUp)
   navButtons.addChild(btnDown)
@@ -430,6 +411,43 @@ function update(){
   }
 
   if(sceneGame.visible === true && GAME_RUNNING === true && GAME_PAUSED === false) {
+
+    btnUp.tap = function() {
+      snakeMovement = 'n'
+      sfxClickButtonTwo.play()
+    }
+    btnUp.click = function() {
+      snakeMovement = 'n'
+      console.log('ButtonTwo Up pressed')
+      sfxClickButtonTwo.play()
+    }
+    btnDown.tap = function() {
+      snakeMovement = 's'
+      sfxClickButtonTwo.play()
+    }
+    btnDown.click = function() {
+      snakeMovement = 's'
+      console.log('ButtonTwo Down pressed')
+      sfxClickButtonTwo.play()
+    }
+    btnRight.tap = function() {
+      snakeMovement = 'e'
+      sfxClickButtonTwo.play()
+    }
+    btnRight.click = function() {
+      snakeMovement = 'e'
+      console.log('ButtonTwo Right pressed')
+      sfxClickButtonTwo.play()
+    }
+    btnLeft.tap = function() {
+      snakeMovement = 'w'
+      sfxClickButtonTwo.play()
+    }
+    btnLeft.click = function() {
+      snakeMovement = 'w'
+      console.log('ButtonTwo Left pressed')
+      sfxClickButtonTwo.play()
+    }
 
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
