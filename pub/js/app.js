@@ -345,6 +345,7 @@ function update(){
   }
 
   if(sceneGame.visible === true && GAME_RUNNING === true && GAME_PAUSED === false) {
+
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
       randomCube = spawnRandomSprite(sceneGame, snake, new P.Sprite(redTexture), MAP_X,MAP_Y, GRID_UNIT)
@@ -382,6 +383,10 @@ function update(){
     // move once every REFRESH_RATE
     if(alarm.getTime() < new Date().getTime()) {
       chainFlow(sceneGame, snake, snakeLengthMax, snakeMovement, cubeTexture, GRID_UNIT)
+
+      // update snake gradient
+      gradiateChain(snake)
+
       alarm.setTime(new Date().getTime() + REFRESH_RATE)
     }
 
@@ -460,6 +465,17 @@ function toggleSnakeMovement() {
   }
   return snakeMovement
 }
+
+// gradiate snake
+function gradiateChain(chain){
+  if(chain.length > 0) {
+    for(var i=0; i < chain.length; i++) {
+      var alpha = Math.max(Math.pow(0.9, i + 1), 0.33)
+      chain[i].alpha = alpha
+    }
+  }
+}
+
 
 preload()
 initSceneMenu()
