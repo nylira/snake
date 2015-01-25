@@ -471,6 +471,8 @@ function endGame() {
   sfxGameOver.play()
   combokeys.reset()
 
+  chainMovement = {current: null, previous: null}
+
   for (var i=sceneGame.children.length-1; i >= 0; i--) {
     sceneGame.removeChild(sceneGame.children[i])
   }
@@ -492,8 +494,6 @@ function startGame(){
   GAME_RUNNING = true
 
   chainMovement = setChainMovement(GAME_RUNNING, sceneGame.visible, chainMovement, DIRECTIONS)
-
-  update()
 }
 
 function updateHighScores(newScore) {

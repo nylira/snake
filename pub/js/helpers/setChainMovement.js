@@ -12,6 +12,8 @@ function setChainMovement(bGameRunning, bSceneGameVisible, chainMovement, direct
   } else if (chainMovement.current === null && chainMovement.previous !== null) {
     newMovement = chainMovement.previous
     console.log('three')
+  } else {
+    console.log('four')
   }
   return {current: newMovement, previous: oldMovement}
 }
