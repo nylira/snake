@@ -4,8 +4,6 @@
 // TODO: particle effects
 // TODO: add message when new high score is achieved
 
-var R = window.devicePixelRatio
-
 // libraries
 var P = require('pixi.js')
 var _ = require('lodash')
@@ -21,11 +19,13 @@ var gradiateChain = require('./helpers/gradiateChain')
 var randomPosition = require('./helpers/randomPosition')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 var stayInBounds = require('./helpers/stayInBounds')
+var setChainMovement = require('./helpers/setChainMovement')
 
 // window
 attachFastClick(document.body)
 
 // constants
+var R = window.devicePixelRatio
 var MAP_X = 400*R
 var MAP_Y = 320*R
 var CANVAS_X = 568*R
@@ -36,15 +36,13 @@ var REFRESH_RATE = 150//ms
 var GAME_RUNNING = false // used when a game is running
 
 // player variables
-var snakeMovement = null
-var snakeMovementLast = null
-var alarm = new Date()
-alarm.setTime(new Date().getTime() + REFRESH_RATE)
+var alarm = new Date().getTime() + REFRESH_RATE
 var snake = []
 var snakeLengthMax
 var randomCube = null
 var snakeDb
 var highScores
+var chainMovement = {current: null, previous: null}
 
 // sounds
 var sfxPickup
@@ -208,10 +206,10 @@ function initSceneGame() {
   navButtons.position.y = 64*R
 
   // keybindings
-  combokeys.bind(['up', 'w'], function() {snakeMovement = 'n'})
-  combokeys.bind(['down','s'], function() {snakeMovement = 's'})
-  combokeys.bind(['right','d'], function() {snakeMovement = 'e'})
-  combokeys.bind(['left','a'], function() {snakeMovement = 'w'})
+  combokeys.bind(['up', 'w'], function() {chainMovement.current = 'n'})
+  combokeys.bind(['down','s'], function() {chainMovement.current = 's'})
+  combokeys.bind(['right','d'], function() {chainMovement.current = 'e'})
+  combokeys.bind(['left','a'], function() {chainMovement.current = 'w'})
 
   btnUp.width = 62*R
   btnUp.height = 62*R
@@ -255,7 +253,7 @@ function initSceneGame() {
   combokeys.bind(['space','esc', 'x'], function() {
     sceneMenu.visible = !sceneMenu.visible
     sceneGame.visible = !sceneGame.visible
-    toggleSnakeMovement()
+    chainMovement = setChainMovement(GAME_RUNNING, sceneGame.visible, chainMovement, DIRECTIONS)
   })
 
   // setup bg
@@ -377,8 +375,6 @@ function update(){
   if(sceneSummary.visible === true && GAME_RUNNING === false) {
     btnAgain.click = btnAgain.tap = function() {
       sfxClickButton.play()
-      sceneSummary.visible = false
-      sceneGame.visible = true
       startGame()
     }
   }
@@ -392,7 +388,7 @@ function update(){
         //console.log('you clicked Resume Game')
         sceneMenu.visible = false
         sceneGame.visible = true
-        toggleSnakeMovement()
+        chainMovement = setChainMovement(GAME_RUNNING, sceneGame.visible, chainMovement, DIRECTIONS)
       }
     } else {
       btnResume.alpha = 0.25
@@ -411,8 +407,6 @@ function update(){
       btnNew.alpha = 1.0
       btnNew.click = btnNew.tap = function() {
         sfxClickButton.play()
-        sceneMenu.visible = false
-        sceneGame.visible = true
         startGame()
       }
     }
@@ -460,27 +454,23 @@ function update(){
     }
 
     // move once every REFRESH_RATE
-    if(alarm.getTime() < new Date().getTime()) {
-      chainFlow(sceneGame, snake, snakeLengthMax, snakeMovement, cubeTexture, GRID_UNIT)
+    if(alarm < new Date().getTime()) {
+      chainFlow(sceneGame, snake, snakeLengthMax, chainMovement.current, cubeTexture, GRID_UNIT)
 
       // update snake gradient
       gradiateChain(snake)
 
-      alarm.setTime(new Date().getTime() + REFRESH_RATE)
+      alarm = new Date().getTime() + REFRESH_RATE
     }
-
   }
   renderer.render(stage)
 }
 
 function endGame() {
   GAME_RUNNING = false
-
   sfxGameOver.play()
-
   combokeys.reset()
 
-  // clear stuff
   for (var i=sceneGame.children.length-1; i >= 0; i--) {
     sceneGame.removeChild(sceneGame.children[i])
   }
@@ -488,16 +478,21 @@ function endGame() {
   snake = []
 
   updateHighScores(snakeLengthMax)
-
   initSceneSummary()
   sceneGame.visible = false
   sceneSummary.visible = true
 }
 
 function startGame(){
-  GAME_RUNNING = true
+  sceneMenu.visible = false
+  sceneSummary.visible = false
+
   initSceneGame()
-  toggleSnakeMovement()
+  sceneGame.visible = true
+  GAME_RUNNING = true
+
+  chainMovement = setChainMovement(GAME_RUNNING, sceneGame.visible, chainMovement, DIRECTIONS)
+
   update()
 }
 
@@ -528,21 +523,10 @@ function sortDescending(intArray) {
   return _.sortBy(intArray, function(num) {return num}).reverse()
 }
   
-function toggleSnakeMovement() {
-  if(GAME_RUNNING === true && sceneGame.visible === false) {
-    snakeMovementLast = snakeMovement
-    snakeMovement = null
-  } else if (snakeMovement === null && snakeMovementLast === null) {
-      snakeMovement = _.head(_.shuffle(DIRECTIONS))
-  } else if (snakeMovement === null && snakeMovementLast !== null) {
-      snakeMovement = snakeMovementLast
-  }
-  return snakeMovement
-}
-
 function btnArrowActivate(dir) {
-  snakeMovement = dir
+  chainMovement.current = dir
   sfxClickButtonTwo.play()
+  return chainMovement.current
 }
 
 preload()
