@@ -32,7 +32,6 @@ var CANVAS_Y = 320*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 150//ms
-var GAME_PAUSED = false // used when a game is running and paused
 var GAME_RUNNING = false // used when a game is running
 
 // player variables
@@ -255,7 +254,6 @@ function initSceneGame() {
   combokeys.bind(['space','esc', 'x'], function() {
     sceneMenu.visible = !sceneMenu.visible
     sceneGame.visible = !sceneGame.visible
-    GAME_PAUSED = !GAME_PAUSED
     toggleSnakeMovement()
   })
 
@@ -368,8 +366,6 @@ function initSceneSummary() {
   btnAgain.position.x = (CANVAS_X*0.67 - btnAgain.width)/2
   btnAgain.position.y = pointsText.position.y + 112*R
   sceneSummaryRight.addChild(btnAgain)
-
-
 }
 
 function update(){
@@ -377,26 +373,24 @@ function update(){
   requestAnimationFrame(update);
 
   // btnAgain
-  if(sceneSummary.visible === true && GAME_RUNNING === false && GAME_PAUSED === true) {
+  if(sceneSummary.visible === true && GAME_RUNNING === false) {
     btnAgain.click = btnAgain.tap = function() {
       sfxClickButton.play()
       sceneSummary.visible = false
       sceneGame.visible = true
-      GAME_PAUSED = false
       startGame()
     }
   }
 
   if(sceneMenu.visible === true) {
     // btnResume
-    if(GAME_RUNNING === true && GAME_PAUSED === true){
+    if(GAME_RUNNING === true){
       btnResume.alpha = 1.0
       btnResume.click = btnResume.tap = function() {
         sfxClickButton.play()
         //console.log('you clicked Resume Game')
         sceneMenu.visible = false
         sceneGame.visible = true
-        GAME_PAUSED = false
         toggleSnakeMovement()
       }
     } else {
@@ -419,12 +413,11 @@ function update(){
         sceneMenu.visible = false
         sceneGame.visible = true
         startGame()
-        //console.log('Starting a new game')
       }
     }
   }
 
-  if(sceneGame.visible === true && GAME_RUNNING === true && GAME_PAUSED === false) {
+  if(sceneGame.visible === true && GAME_RUNNING === true) {
 
     btnUp.tap = btnUp.click =function(){btnArrowActivate('n')}
     btnDown.tap = btnDown.click = function(){btnArrowActivate('s')}
@@ -480,7 +473,6 @@ function update(){
 }
 
 function endGame() {
-  GAME_PAUSED = true
   GAME_RUNNING = false
 
   sfxGameOver.play()
@@ -502,11 +494,10 @@ function endGame() {
 }
 
 function startGame(){
-  GAME_PAUSED = false
   GAME_RUNNING = true
   initSceneGame()
-  update()
   toggleSnakeMovement()
+  update()
 }
 
 function updateHighScores(newScore) {
@@ -537,7 +528,7 @@ function sortDescending(intArray) {
 }
   
 function toggleSnakeMovement() {
-  if(GAME_RUNNING === true && GAME_PAUSED === true) {
+  if(GAME_RUNNING === true && sceneGame.visible === false) {
     snakeMovementLast = snakeMovement
     snakeMovement = null
   } else if (snakeMovement === null && snakeMovementLast === null) {
