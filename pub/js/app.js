@@ -26,9 +26,9 @@ attachFastClick(document.body)
 
 // constants
 var MAP_X = 320*R
-var MAP_Y = 400*R
+var MAP_Y = 320*R
 var CANVAS_X = 320*R
-var CANVAS_Y = 568*R
+var CANVAS_Y = 460*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 150//ms
