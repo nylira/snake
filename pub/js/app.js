@@ -494,10 +494,7 @@ function endGame() {
   randomCube = null
   snake = []
 
-  // update high scores
-  console.log('Your Score: ', snakeLengthMax)
-  console.log(updateHighScores(snakeLengthMax))
-  console.log('All Time Highs: ', localStorage.getItem('NyliraGameSnake'))
+  updateHighScores(snakeLengthMax)
 
   initSceneSummary()
   sceneGame.visible = false
