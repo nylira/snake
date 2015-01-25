@@ -6,6 +6,7 @@
   "dependencies": {
     "browserify": "^8.1.1",
     "combokeys": "^2.3.0",
+    "fastclick": "^1.0.3",
     "howler": "^1.1.25",
     "koa": "^0.15.0",
     "koa-router": "^3.8.0",

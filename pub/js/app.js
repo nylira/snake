@@ -1,12 +1,9 @@
 'use strict'
-// TODO: create touch controls
 // TODO: change display depending on user's screen
 // TODO: text element polish
-// TODO: colors for the Game page: gradients, etc
 // TODO: particle effects
 // TODO: add message when new high score is achieved
-// TODO: sounds
-//
+
 var R = window.devicePixelRatio
 
 // libraries
@@ -15,6 +12,7 @@ var _ = require('lodash')
 var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
 var Howl = require('howler').Howl
+var attachFastClick = require('fastclick');
 
 // helpers
 var randomPosition = require('./helpers/randomPosition')
@@ -22,6 +20,9 @@ var stayInBounds = require('./helpers/stayInBounds')
 var chainFlow = require('./helpers/chainFlow')
 var Button = require('./helpers/Button')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
+
+// window
+attachFastClick(document.body)
 
 // constants
 var MAP_X = 320*R
