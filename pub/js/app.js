@@ -71,15 +71,19 @@ var sceneGame
 
 var sceneSummary
   , btnAgain
+  , sceneSummaryLeft
+  , sceneSummaryRight
 
-var tiles
-  , bgTiles
+var tileGrid
+  , tileGradient
+  , tileBlack
 
-var tileTexture
+var tileGridTexture
+  , tileGradientTexture
+  , tileBlackTexture
   , cubeTexture
   , redTexture
   , btnTexture
-  , bgTileTexture
   , arrowTexture
 
 // this run no matter what scene is loaded
@@ -131,25 +135,29 @@ function preload() {
 
   // setup textures
   if(R === 2) {
-    tileTexture = P.Texture.fromImage('../img/darkGrid16x16@x2.png')
+    tileGridTexture = P.Texture.fromImage('../img/darkGrid16x16@x2.png')
+    tileGradientTexture = P.Texture.fromImage('../img/bg32x568@x2.png')
+    tileBlackTexture = P.Texture.fromImage('../img/black16x16.png')
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256@x2.png')
-    bgTileTexture = P.Texture.fromImage('../img/bg32x568@x2.png')
     arrowTexture = P.Texture.fromImage('../img/arrow256x256@x2.png')
   } else {
-    tileTexture = P.Texture.fromImage('../img/darkGrid16x16.png')
+    tileGridTexture = P.Texture.fromImage('../img/darkGrid16x16.png')
+    tileGradientTexture = P.Texture.fromImage('../img/bg32x568.png')
+    tileBlackTexture = P.Texture.fromImage('../img/black16x16.png')
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256.png')
-    bgTileTexture = P.Texture.fromImage('../img/bg32x568.png')
     arrowTexture = P.Texture.fromImage('../img/arrow256x256.png')
   }
 
+  // setup tiling textures
+  tileGrid = new P.TilingSprite(tileGridTexture, MAP_X, MAP_Y)
+  tileGradient = new P.TilingSprite(tileGradientTexture, CANVAS_X, CANVAS_Y)
+  tileBlack = new P.TilingSprite(tileBlackTexture, CANVAS_X, CANVAS_Y)
+
   // setup sprites
-  tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_Y)
-  bgTiles = new P.TilingSprite(bgTileTexture, CANVAS_X, CANVAS_Y)
-  bgTiles.height = 568*R
   cube = new P.Sprite(cubeTexture)
   cube1 = new P.Sprite(cubeTexture)
   cube2 = new P.Sprite(cubeTexture)
@@ -161,7 +169,7 @@ function preload() {
 
 function initSceneMenu() {
   // background
-  sceneMenu.addChild(bgTiles)
+  sceneMenu.addChild(tileGradient)
 
   // logo
   var logoTextStyle = {
@@ -252,7 +260,7 @@ function initSceneGame() {
   })
 
   // setup bg
-  sceneGame.addChild(tiles)
+  sceneGame.addChild(tileGrid)
 
   // setup initial snake
   // randomize position in the middle 1/9 of map so player doesn't die instantly
@@ -270,34 +278,24 @@ function initSceneGame() {
 
 function initSceneSummary() {
   // background
-  sceneSummary.addChild(bgTiles)
+  sceneSummary.addChild(tileGradient)
 
-  // game over title
-  var gameOverTextStyle = {
-    font: '300 '+ 48*R +'px "Helvetica Neue", Arial, Helvetica, sans-serif'
-  , fill: 'hsla(38,100%,100%,0.75)'
-  , dropShadow: true
-  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 3*R
-  }
-  var gameOverText = new P.Text('Game Over', gameOverTextStyle)
-  gameOverText.position.x = (renderer.width - gameOverText.width) /2
-  gameOverText.position.y = 48*R
-  sceneSummary.addChild(gameOverText)
 
-  // points text
-  var pointsTextStyle = {
-    font: 'bold '+ 24*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
-  , fill: 'hsla(38,100%,100%,0.75)'
-  , dropShadow: true
-  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
-  , dropShadowDistance: 3*R
-  }
-  var pointsTextString = 'You scored ' + String(snakeLengthMax) + ' pts!'
-  var pointsText = new P.Text(pointsTextString, pointsTextStyle)
-  pointsText.position.x = (renderer.width - pointsText.width) /2
-  pointsText.position.y = gameOverText.y + 64*R
-  sceneSummary.addChild(pointsText)
+  sceneSummaryLeft = new P.DisplayObjectContainer()
+  sceneSummaryLeft.width = CANVAS_X * 0.33
+  sceneSummaryLeft.position.x = 0
+  sceneSummaryLeft.position.y = 0
+  sceneSummary.addChild(sceneSummaryLeft)
+
+  sceneSummaryRight = new P.DisplayObjectContainer()
+  sceneSummaryRight.width = CANVAS_X * 0.67
+  sceneSummaryRight.position.x = CANVAS_X * 0.33
+  sceneSummaryRight.position.y = 0
+  sceneSummary.addChild(sceneSummaryRight)
+  
+  tileBlack.width = CANVAS_X*0.33
+  tileBlack.alpha = 0.15
+  sceneSummaryLeft.addChild(tileBlack)
 
   // high scores label
   var highScoresLabelTextStyle = {
@@ -308,9 +306,9 @@ function initSceneSummary() {
   , dropShadowDistance: 3*R
   }
   var highScoresLabelText = new P.Text('Your High Scores', highScoresLabelTextStyle)
-  highScoresLabelText.position.x = (renderer.width - highScoresLabelText.width) /2
-  highScoresLabelText.position.y = pointsText.y + 80*R
-  sceneSummary.addChild(highScoresLabelText)
+  highScoresLabelText.position.x = (CANVAS_X*0.33 - highScoresLabelText.width)/2
+  highScoresLabelText.position.y = 32*R
+  sceneSummaryLeft.addChild(highScoresLabelText)
 
   // high scores display
   var highScoresContainer = new P.DisplayObjectContainer()
@@ -332,18 +330,46 @@ function initSceneSummary() {
     var scoreTextX = 64*R
     var scoreTextY = highScoresLabelText.y + 32*R
     var scoreText = new P.Text(highScores[i] + ' pts ', scoreTextStyle)
-    scoreText.position.x = (renderer.width - scoreText.width) /2
+    scoreText.position.x = (CANVAS_X*0.33 - scoreText.width)/2
     scoreText.position.y = scoreTextY + scoreText.height * i
     highScoresContainer.addChild(scoreText)
   }
+  sceneSummaryLeft.addChild(highScoresContainer)
+
+  // game over title
+  var gameOverTextStyle = {
+    font: '300 '+ 48*R +'px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsla(38,100%,100%,0.75)'
+  , dropShadow: true
+  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
+  , dropShadowDistance: 3*R
+  }
+  var gameOverText = new P.Text('Game Over', gameOverTextStyle)
+  gameOverText.position.x = (CANVAS_X*0.67 - gameOverText.width)/2
+  gameOverText.position.y = 32*R
+  sceneSummaryRight.addChild(gameOverText)
+
+  // points text
+  var pointsTextStyle = {
+    font: 'bold '+ 24*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsla(38,100%,100%,0.75)'
+  , dropShadow: true
+  , dropShadowColor: 'hsla(0,0%,0%,0.3)'
+  , dropShadowDistance: 3*R
+  }
+  var pointsTextString = 'You scored ' + String(snakeLengthMax) + ' pts!'
+  var pointsText = new P.Text(pointsTextString, pointsTextStyle)
+  pointsText.position.x = (CANVAS_X*0.67 - pointsText.width)/2
+  pointsText.position.y = gameOverText.y + 64*R
+  sceneSummaryRight.addChild(pointsText)
 
   // button
   btnAgain = new Button('Play Again', btnTexture)
-  btnAgain.position.x = (renderer.width - btnAgain.width) / 2
-  btnAgain.position.y = 32*R * 14
-  sceneSummary.addChild(btnAgain)
+  btnAgain.position.x = (CANVAS_X*0.67 - btnAgain.width)/2
+  btnAgain.position.y = pointsText.position.y + 112*R
+  sceneSummaryRight.addChild(btnAgain)
 
-  sceneSummary.addChild(highScoresContainer)
+
 }
 
 function update(){
