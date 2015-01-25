@@ -26,9 +26,9 @@ attachFastClick(document.body)
 
 // constants
 var MAP_X = 320*R
-var MAP_Y = 320*R
+var MAP_Y = 400*R
 var CANVAS_X = 320*R
-var CANVAS_Y = 460*R
+var CANVAS_Y = 568*R - 20*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 150//ms
@@ -210,7 +210,7 @@ function initSceneGame() {
   navButtons.width = 62*3*R + 16*R
   navButtons.height = 62*2*R + 8*R
   navButtons.position.x = (CANVAS_X - navButtons.width) / 2
-  navButtons.position.y = 400*R + 16*R
+  navButtons.position.y = 400*R + 16*R - 8*R
 
   // keybindings
   combokeys.bind(['up', 'w'], function() {snakeMovement = 'n'})
