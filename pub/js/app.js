@@ -14,7 +14,6 @@ var attachFastClick = require('fastclick');
 
 // helpers
 var Button = require('./helpers/Button')
-var btnArrowActivate = require('./helpers/btnArrowActivate')
 var chainFlow = require('./helpers/chainFlow')
 var gradiateChain = require('./helpers/gradiateChain')
 var randomPosition = require('./helpers/randomPosition')
@@ -417,13 +416,15 @@ function update(){
   if(sceneGame.visible === true && GAME_RUNNING === true) {
 
     btnUp.tap = btnUp.click =
-      function(){btnArrowActivate('n', sfxClickButtonTwo)}
+      function(){chainMovement.current = 'n'; sfxClickButtonTwo.play()}
     btnDown.tap = btnDown.click =
-      function(){btnArrowActivate('s', sfxClickButtonTwo)}
+      function(){chainMovement.current = 's'; sfxClickButtonTwo.play()}
     btnRight.tap = btnRight.click =
-      function(){btnArrowActivate('e', sfxClickButtonTwo)}
+      function(){chainMovement.current = 'e'; sfxClickButtonTwo.play()}
     btnLeft.tap = btnLeft.click =
-      function(){btnArrowActivate('w', sfxClickButtonTwo)}
+      function(){chainMovement.current = 'w'; sfxClickButtonTwo.play()}
+
+  
 
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
