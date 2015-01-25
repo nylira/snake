@@ -17,9 +17,10 @@ var Button = require('./helpers/Button')
 var chainFlow = require('./helpers/chainFlow')
 var gradiateChain = require('./helpers/gradiateChain')
 var randomPosition = require('./helpers/randomPosition')
+var setChainMovement = require('./helpers/setChainMovement')
+var sortDescending = require('./helpers/sortDescending')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 var stayInBounds = require('./helpers/stayInBounds')
-var setChainMovement = require('./helpers/setChainMovement')
 var updateHighScores = require('./helpers/updateHighScores')
 
 // window
@@ -318,6 +319,9 @@ function initSceneSummary() {
   , dropShadowDistance: 3*R
   }
 
+  // sort high scores
+  highScores = sortDescending(highScores)
+
   var scoresToShow
   if(highScores.length > 5) {
     scoresToShow = 5
@@ -497,7 +501,7 @@ function endGame() {
   snake = []
 
   // update high scores with the latest
-  updateHighScores(snakeLengthMax, highScores, 'NyliraGameSnake')
+  highScores = updateHighScores(snakeLengthMax, highScores, 'NyliraGameSnake')
 
   // setup the summary scene
   initSceneSummary()

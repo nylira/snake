@@ -1,4 +1,5 @@
 _ = require('lodash')
+sortDescending = require('./sortDescending')
 
 function updateHighScores(newScore, scores, db) {
   var highScoreMessage
@@ -15,16 +16,12 @@ function updateHighScores(newScore, scores, db) {
   } else {
     highScoreMessage = 'Sorry, you didn\'t beat any records. Try again!'
   }
-  return highScoreMessage
+  return scores
 }
 
 function updateHighScoresDb(scores, db) {
   scores = sortDescending(scores)
   localStorage.setItem(db, JSON.stringify({'highScores':scores}))
-}
-
-function sortDescending(intArray) {
-  return _.sortBy(intArray, function(num) {return num}).reverse()
 }
 
 module.exports = updateHighScores
