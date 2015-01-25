@@ -14,12 +14,14 @@ var attachFastClick = require('fastclick');
 
 // helpers
 var Button = require('./helpers/Button')
+var btnArrowActivate = require('./helpers/btnArrowActivate')
 var chainFlow = require('./helpers/chainFlow')
 var gradiateChain = require('./helpers/gradiateChain')
 var randomPosition = require('./helpers/randomPosition')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 var stayInBounds = require('./helpers/stayInBounds')
 var setChainMovement = require('./helpers/setChainMovement')
+var updateHighScores = require('./helpers/updateHighScores')
 
 // window
 attachFastClick(document.body)
@@ -414,10 +416,14 @@ function update(){
 
   if(sceneGame.visible === true && GAME_RUNNING === true) {
 
-    btnUp.tap = btnUp.click =function(){btnArrowActivate('n')}
-    btnDown.tap = btnDown.click = function(){btnArrowActivate('s')}
-    btnRight.tap = btnRight.click = function(){btnArrowActivate('e')}
-    btnLeft.tap = btnLeft.click = function(){btnArrowActivate('w')}
+    btnUp.tap = btnUp.click =
+      function(){btnArrowActivate('n', sfxClickButtonTwo)}
+    btnDown.tap = btnDown.click =
+      function(){btnArrowActivate('s', sfxClickButtonTwo)}
+    btnRight.tap = btnRight.click =
+      function(){btnArrowActivate('e', sfxClickButtonTwo)}
+    btnLeft.tap = btnLeft.click =
+      function(){btnArrowActivate('w', sfxClickButtonTwo)}
 
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
@@ -467,20 +473,35 @@ function update(){
 }
 
 function endGame() {
+  // stop game loop
   GAME_RUNNING = false
+
   sfxGameOver.play()
+
+  // remove hotkeys
   combokeys.reset()
 
+  // reset chain movement
   chainMovement = {current: null, previous: null}
 
+  // remove everything from the sceneGame
   for (var i=sceneGame.children.length-1; i >= 0; i--) {
     sceneGame.removeChild(sceneGame.children[i])
   }
+
+  // remove the active random cube
   randomCube = null
+
+  // remove all pieces from the snake
   snake = []
 
-  updateHighScores(snakeLengthMax)
+  // update high scores with the latest
+  updateHighScores(snakeLengthMax, highScores, 'NyliraGameSnake')
+
+  // setup the summary scene
   initSceneSummary()
+
+  // show it
   sceneGame.visible = false
   sceneSummary.visible = true
 }
@@ -496,37 +517,8 @@ function startGame(){
   chainMovement = setChainMovement(GAME_RUNNING, sceneGame.visible, chainMovement, DIRECTIONS)
 }
 
-function updateHighScores(newScore) {
-  var highScoreMessage
-  if(highScores.length < 10) {
-    highScores.push(newScore)
-    highScoreMessage = 'NEW HIGH SCORE!'
-    updateHighScoresDb()
-  } else if (_.min(highScores) < newScore) {
-    highScores = sortDescending(highScores)
-    highScores.pop()
-    highScores.push(newScore)
-    highScoreMessage = 'You knocked someone off the high score list!'
-    updateHighScoresDb()
-  } else {
-    highScoreMessage = 'Sorry, you didn\'t beat any records. Try again!'
-  }
-  return highScoreMessage
-}
-
-function updateHighScoresDb() {
-  highScores = sortDescending(highScores)
-  localStorage.setItem('NyliraGameSnake', JSON.stringify({'highScores':highScores}))
-}
-
-function sortDescending(intArray) {
-  return _.sortBy(intArray, function(num) {return num}).reverse()
-}
-  
-function btnArrowActivate(dir) {
-  chainMovement.current = dir
-  sfxClickButtonTwo.play()
-  return chainMovement.current
+function resetHighScores() {
+  localStorage.setItem('NyliraGameSnake', null)
 }
 
 preload()
