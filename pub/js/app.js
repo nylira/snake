@@ -364,7 +364,7 @@ function update(){
 
   // btnAgain
   if(sceneSummary.visible === true && GAME_RUNNING === false && GAME_PAUSED === true) {
-    btnAgain.click = function() {
+    btnAgain.click = btnAgain.tap = function() {
       sfxClickButton.play()
       sceneSummary.visible = false
       sceneGame.visible = true
@@ -377,7 +377,7 @@ function update(){
     // btnResume
     if(GAME_RUNNING === true && GAME_PAUSED === true){
       btnResume.alpha = 1.0
-      btnResume.click = function() {
+      btnResume.click = btnResume.tap = function() {
         sfxClickButton.play()
         //console.log('you clicked Resume Game')
         sceneMenu.visible = false
@@ -387,7 +387,7 @@ function update(){
       }
     } else {
       btnResume.alpha = 0.25
-      btnResume.click = function() {
+      btnResume.click = btnResume.tap = function() {
         console.error('No game is running right now')
       }
     } 
@@ -395,12 +395,12 @@ function update(){
     // btnNew
     if(GAME_RUNNING === true) {
       btnNew.alpha = 0.25
-      btnNew.click = function() {
+      btnNew.click = btnNew.tap = function() {
         console.error('A game is already running')
       }
     } else {
       btnNew.alpha = 1.0
-      btnNew.click = function() {
+      btnNew.click = btnNew.tap = function() {
         sfxClickButton.play()
         sceneMenu.visible = false
         sceneGame.visible = true
@@ -412,42 +412,10 @@ function update(){
 
   if(sceneGame.visible === true && GAME_RUNNING === true && GAME_PAUSED === false) {
 
-    btnUp.tap = function() {
-      snakeMovement = 'n'
-      sfxClickButtonTwo.play()
-    }
-    btnUp.click = function() {
-      snakeMovement = 'n'
-      console.log('ButtonTwo Up pressed')
-      sfxClickButtonTwo.play()
-    }
-    btnDown.tap = function() {
-      snakeMovement = 's'
-      sfxClickButtonTwo.play()
-    }
-    btnDown.click = function() {
-      snakeMovement = 's'
-      console.log('ButtonTwo Down pressed')
-      sfxClickButtonTwo.play()
-    }
-    btnRight.tap = function() {
-      snakeMovement = 'e'
-      sfxClickButtonTwo.play()
-    }
-    btnRight.click = function() {
-      snakeMovement = 'e'
-      console.log('ButtonTwo Right pressed')
-      sfxClickButtonTwo.play()
-    }
-    btnLeft.tap = function() {
-      snakeMovement = 'w'
-      sfxClickButtonTwo.play()
-    }
-    btnLeft.click = function() {
-      snakeMovement = 'w'
-      console.log('ButtonTwo Left pressed')
-      sfxClickButtonTwo.play()
-    }
+    btnUp.tap = btnUp.click =function(){btnArrowActivate('n')}
+    btnDown.tap = btnDown.click = function(){btnArrowActivate('s')}
+    btnRight.tap = btnRight.click = function(){btnArrowActivate('e')}
+    btnLeft.tap = btnLeft.click = function(){btnArrowActivate('w')}
 
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
@@ -579,6 +547,10 @@ function gradiateChain(chain){
   }
 }
 
+function btnArrowActivate(dir) {
+  snakeMovement = dir
+  sfxClickButtonTwo.play()
+}
 
 preload()
 initSceneMenu()
