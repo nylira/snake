@@ -15,11 +15,12 @@ var Howl = require('howler').Howl
 var attachFastClick = require('fastclick');
 
 // helpers
-var randomPosition = require('./helpers/randomPosition')
-var stayInBounds = require('./helpers/stayInBounds')
-var chainFlow = require('./helpers/chainFlow')
 var Button = require('./helpers/Button')
+var chainFlow = require('./helpers/chainFlow')
+var gradiateChain = require('./helpers/gradiateChain')
+var randomPosition = require('./helpers/randomPosition')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
+var stayInBounds = require('./helpers/stayInBounds')
 
 // window
 attachFastClick(document.body)
@@ -537,16 +538,6 @@ function toggleSnakeMovement() {
       snakeMovement = snakeMovementLast
   }
   return snakeMovement
-}
-
-// gradiate snake
-function gradiateChain(chain){
-  if(chain.length > 0) {
-    for(var i=0; i < chain.length; i++) {
-      var alpha = Math.max(Math.pow(0.9, i + 1), 0.33)
-      chain[i].alpha = alpha
-    }
-  }
 }
 
 function btnArrowActivate(dir) {
