@@ -25,10 +25,10 @@ var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 attachFastClick(document.body)
 
 // constants
-var MAP_X = 320*R
-var MAP_Y = 400*R
-var CANVAS_X = 320*R
-var CANVAS_Y = 568*R - 20*R
+var MAP_X = 400*R
+var MAP_Y = 320*R
+var CANVAS_X = 568*R
+var CANVAS_Y = 320*R
 var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 150//ms
@@ -148,7 +148,7 @@ function preload() {
 
   // setup sprites
   tiles = new P.TilingSprite(tileTexture, MAP_X, MAP_Y)
-  bgTiles = new P.TilingSprite(bgTileTexture, MAP_X, CANVAS_Y)
+  bgTiles = new P.TilingSprite(bgTileTexture, CANVAS_X, CANVAS_Y)
   bgTiles.height = 568*R
   cube = new P.Sprite(cubeTexture)
   cube1 = new P.Sprite(cubeTexture)
@@ -165,7 +165,7 @@ function initSceneMenu() {
 
   // logo
   var logoTextStyle = {
-    font: '300 '+ 80*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
+    font: '300 '+ 64*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
   , fill: 'hsla(38,100%,100%,0.75)'
   , dropShadow: true
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
@@ -173,26 +173,13 @@ function initSceneMenu() {
   }
   var logoText = new P.Text('Snake', logoTextStyle)
   logoText.position.x = (renderer.width - logoText.width) /2
-  logoText.position.y = 128*R
+  logoText.position.y = 32*R
   sceneMenu.addChild(logoText)
-
-  // input
-  /*
-  var inputTextStyle = {
-    font: 16*R + 'px Arial'
-  , fill: '#4782ad'
-  , dropShadow: false
-  }
-  var inputText = new P.Text('Controls: Arrow Keys or WASD (Spacebar to Pause)', inputTextStyle)
-  inputText.position.x = (renderer.width - inputText.width) /2
-  inputText.position.y = 448*R
-  sceneMenu.addChild(inputText)
-  */
 
   // button group
   var sceneMenuButtons = new P.DisplayObjectContainer()
-  sceneMenuButtons.x = (MAP_X - 256*R)/2
-  sceneMenuButtons.y = 32*R * 12
+  sceneMenuButtons.x = (CANVAS_X - 256*R)/2
+  sceneMenuButtons.y = logoText.y + 108*R
   sceneMenu.addChild(sceneMenuButtons)
 
   // buttons
@@ -207,10 +194,10 @@ function initSceneMenu() {
 
 function initSceneGame() {
   var navButtons = new P.DisplayObjectContainer()
-  navButtons.width = 62*3*R + 16*R
-  navButtons.height = 62*2*R + 8*R
-  navButtons.position.x = (CANVAS_X - navButtons.width) / 2
-  navButtons.position.y = 400*R + 16*R - 8*R
+  navButtons.width = 62*2*R + 8*R
+  navButtons.height = 62*3*R + 16*R
+  navButtons.position.x = MAP_X + 62*R + 4*R + 18*R
+  navButtons.position.y = 64*R
 
   // keybindings
   combokeys.bind(['up', 'w'], function() {snakeMovement = 'n'})
@@ -227,7 +214,7 @@ function initSceneGame() {
 
   btnDown.width = 62*R
   btnDown.height = 62*R
-  btnDown.position.y = btnUp.position.y + btnUp.height + 8*R
+  btnDown.position.y = btnUp.position.y + btnUp.height*2 + 16*R
   btnDown.anchor = new P.Point(0.5, 0.5)
   btnDown.rotation = Math.PI
   btnDown.interactive = true
@@ -235,8 +222,8 @@ function initSceneGame() {
 
   btnLeft.width = 62*R
   btnLeft.height = 62*R
-  btnLeft.position.x = btnUp.position.x - btnUp.width - 8*R
-  btnLeft.position.y = btnUp.position.y + 31*R
+  btnLeft.position.x = btnUp.position.x - btnUp.width/2 - 4*R
+  btnLeft.position.y = btnUp.position.y + btnUp.height + 8*R
   btnLeft.anchor = new P.Point(0.5, 0.5)
   btnLeft.rotation = Math.PI * 1.5
   btnLeft.interactive = true
@@ -244,8 +231,8 @@ function initSceneGame() {
 
   btnRight.width = 62*R
   btnRight.height = 62*R
-  btnRight.position.x = btnUp.position.x + btnUp.width + 8*R
-  btnRight.position.y = btnUp.position.y + 31*R
+  btnRight.position.x = btnUp.position.x + btnUp.width/2 + 4*R
+  btnRight.position.y = btnUp.position.y + btnUp.height + 8*R
   btnRight.anchor = new P.Point(0.5, 0.5)
   btnRight.rotation = Math.PI * 0.5
   btnRight.interactive = true
