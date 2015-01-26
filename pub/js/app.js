@@ -22,6 +22,7 @@ var sortDescending = require('./helpers/sortDescending')
 var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 var stayInBounds = require('./helpers/stayInBounds')
 var updateHighScores = require('./helpers/updateHighScores')
+var retinaLinkify = require('./helpers/retinaLinkify')
 
 // window
 attachFastClick(document.body)
@@ -78,7 +79,8 @@ var tileGrid
   , tileGradient
   , tileBlack
 
-var tileGridTexture
+var ATextures
+  , tileGridTexture
   , tileGradientTexture
   , tileBlackTexture
   , cubeTexture
@@ -86,8 +88,34 @@ var tileGridTexture
   , btnTexture
   , arrowTexture
 
+
+
 // this run no matter what scene is loaded
 function preload() {
+
+  // pixi's asset loader
+  var ATexturesDefault = [
+    '../img/darkGrid16x16.png'
+  , '../img/darkGrid16x16.png'
+  , '../img/bg32x568.png'
+  , '../img/black16x16.png'
+  , '../img/lightBlock16x16.png'
+  , '../img/block16x16red.png'
+  , '../img/btn64x256.png'
+  , '../img/arrow256x256.png'
+  ]
+  var ATexturesRetina = retinaLinkify(ATexturesDefault)
+
+  if(R === 2) {
+    ATextures = ATexturesRetina
+  } else {
+    ATextures = ATextures
+  }
+
+  var assetLoader = new P.AssetLoader(ATextures)
+  assetLoader.onComplete = firstStart()
+  assetLoader.load()
+
   // recover high scores from local storage if there are any.
   var snakeDb = JSON.parse(localStorage.getItem('NyliraGameSnake'))
   if(snakeDb !== null){
@@ -98,7 +126,9 @@ function preload() {
     highScores = []
     console.log('No high scores in local storage yet. Add some!')
   }
+}
 
+function setup() {
   // setup stage
   stage = new P.Stage(0x141A1F)
   renderer = P.autoDetectRenderer(CANVAS_X, CANVAS_Y)
@@ -526,6 +556,10 @@ function resetHighScores() {
   localStorage.setItem('NyliraGameSnake', null)
 }
 
+function firstStart() {
+  setup()
+  initSceneMenu()
+  update()
+}
+
 preload()
-initSceneMenu()
-update()
