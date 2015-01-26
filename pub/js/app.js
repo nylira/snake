@@ -11,8 +11,6 @@ var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
 var Howl = require('howler').Howl
 var attachFastClick = require('fastclick');
-var Hammer = require('hammerjs')
-var hammertime = new Hammer()
 
 
 // helpers
@@ -410,9 +408,6 @@ function initSceneSummary() {
 function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
-
-  hammertime.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL  })
-  console.log(hammertime.direction)
 
   // btnAgain
   if(sceneSummary.visible === true && GAME_RUNNING === false) {
