@@ -113,10 +113,10 @@ function preload() {
   var assetLoader = new P.AssetLoader(ATextures)
   assetLoader.onComplete = function(){
     console.log("assets loaded!")
+    document.getElementById('loading').style.display = 'none'
     firstStart()
   }
   assetLoader.load()
-  console.log("assetLoader is now loading your assets. Please be patient!")
 
   // recover high scores from local storage if there are any.
   var snakeDb = JSON.parse(localStorage.getItem('NyliraGameSnake'))
