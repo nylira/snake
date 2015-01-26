@@ -111,7 +111,10 @@ function preload() {
   }
 
   var assetLoader = new P.AssetLoader(ATextures)
-  assetLoader.onComplete = firstStart()
+  assetLoader.onComplete = function(){
+    console.log("assets loaded!")
+    firstStart()
+  }
   assetLoader.load()
   console.log("assetLoader is now loading your assets. Please be patient!")
 
@@ -120,10 +123,10 @@ function preload() {
   if(snakeDb !== null){
     highScores = snakeDb.highScores
     highScores = _.sortBy(highScores, function(num) {return num}).reverse()
-    console.log('highScores retrieved from localStorage: ', highScores)
+    //console.log('highScores retrieved from localStorage: ', highScores)
   } else {
     highScores = []
-    console.log('No high scores in local storage yet. Add some!')
+    //console.log('No high scores in local storage yet. Add some!')
   }
 }
 
