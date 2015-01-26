@@ -24,6 +24,7 @@ var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 var stayInBounds = require('./helpers/stayInBounds')
 var updateHighScores = require('./helpers/updateHighScores')
 var retinaLinkify = require('./helpers/retinaLinkify')
+var swipeEvent = require('./helpers/swipeEvent')
 
 // window
 attachFastClick(document.body)
@@ -451,6 +452,11 @@ function update(){
   }
 
   if(sceneGame.visible === true && GAME_RUNNING === true) {
+    // see if this works
+    
+    if(swipeEvent(sceneGame) !== undefined) {
+      console.log(swipeEvent(sceneGame))
+    }
 
     btnUp.tap = btnUp.click =
       function(){chainMovement.current = 'n'; sfxClickButtonTwo.play()}
