@@ -454,6 +454,12 @@ function update(){
   if(sceneGame.visible === true && GAME_RUNNING === true) {
     // see if this works
     
+    sceneGame.touchstart = function() {
+      console.log("starting touch event on sceneGame...")
+    }
+    sceneGame.touchend = function() {
+      console.log("...ending touch event on sceneGame")
+    }
     if(swipeEvent(sceneGame) !== undefined) {
       console.log(swipeEvent(sceneGame))
     }
