@@ -88,8 +88,6 @@ var ATextures
   , btnTexture
   , arrowTexture
 
-
-
 // this run no matter what scene is loaded
 function preload() {
 
@@ -115,6 +113,7 @@ function preload() {
   var assetLoader = new P.AssetLoader(ATextures)
   assetLoader.onComplete = firstStart()
   assetLoader.load()
+  console.log("assetLoader is now loading your assets. Please be patient!")
 
   // recover high scores from local storage if there are any.
   var snakeDb = JSON.parse(localStorage.getItem('NyliraGameSnake'))
