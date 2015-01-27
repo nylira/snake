@@ -114,7 +114,7 @@ function preload() {
   ]
   var ATexturesRetina = retinaLinkify(ATexturesDefault)
 
-  if(R === 2 || window.screen.availWidth > 480) {
+  if(R === 2) {
     ATextures = ATexturesRetina
   } else {
     ATextures = ATexturesDefault
