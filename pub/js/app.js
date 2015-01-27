@@ -384,7 +384,7 @@ function initSceneSummary() {
   , dropShadowDistance: 3*R
   }
   var highScoresLabelText = new P.Text('High Scores', highScoresLabelTextStyle)
-  highScoresLabelText.position.x = (CANVAS_X*0.33 - highScoresLabelText.width)/2
+  highScoresLabelText.position.x = (CANVAS_X - MAP_X - highScoresLabelText.width)/2
   highScoresLabelText.position.y = 24*R
   sceneSummaryRight.addChild(highScoresLabelText)
 
@@ -412,7 +412,7 @@ function initSceneSummary() {
       scoreText = new P.Text('--', scoreTextStyle)
     }
       
-    scoreText.position.x = (CANVAS_X*0.33 - scoreText.width)/2
+    scoreText.position.x = (CANVAS_X - MAP_X - scoreText.width)/2
     scoreText.position.y = scoreTextY + scoreText.height * i
     highScoresContainer.addChild(scoreText)
   }
