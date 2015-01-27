@@ -350,7 +350,6 @@ function initSceneSummary() {
   // background
   sceneSummary.addChild(tileGradient)
 
-
   sceneSummaryLeft = new P.DisplayObjectContainer()
   sceneSummaryLeft.width = CANVAS_X * 0.33
   sceneSummaryLeft.position.x = 0
@@ -377,7 +376,7 @@ function initSceneSummary() {
   }
   var highScoresLabelText = new P.Text('Your High Scores', highScoresLabelTextStyle)
   highScoresLabelText.position.x = (CANVAS_X*0.33 - highScoresLabelText.width)/2
-  highScoresLabelText.position.y = 32*R
+  highScoresLabelText.position.y = 24*R
   sceneSummaryLeft.addChild(highScoresLabelText)
 
   // high scores display
@@ -393,16 +392,17 @@ function initSceneSummary() {
   // sort high scores
   highScores = sortDescending(highScores)
 
-  var scoresToShow
-  if(highScores.length > 5) {
-    scoresToShow = 5
-  } else {
-    scoresToShow = highScores.length
-  }
-  for(var i=0; i < scoresToShow; i++) {
+  for(var i=0; i < 10; i++) {
     var scoreTextX = 64*R
     var scoreTextY = highScoresLabelText.y + 32*R
-    var scoreText = new P.Text(highScores[i] + ' pts ', scoreTextStyle)
+
+    var scoreText
+    if(highScores[i] !== undefined) {
+      scoreText = new P.Text(highScores[i] + ' pts ', scoreTextStyle)
+    } else {
+      scoreText = new P.Text('--', scoreTextStyle)
+    }
+      
     scoreText.position.x = (CANVAS_X*0.33 - scoreText.width)/2
     scoreText.position.y = scoreTextY + scoreText.height * i
     highScoresContainer.addChild(scoreText)
