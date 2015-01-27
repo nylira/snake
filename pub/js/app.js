@@ -114,15 +114,14 @@ function preload() {
   ]
   var ATexturesRetina = retinaLinkify(ATexturesDefault)
 
-  if(R === 2) {
+  if(R === 2 || window.screen.availWidth > 480) {
     ATextures = ATexturesRetina
   } else {
-    ATextures = ATextures
+    ATextures = ATexturesDefault
   }
 
   var assetLoader = new P.AssetLoader(ATextures)
   assetLoader.onComplete = function(){
-    //console.log("assets loaded! hiding load msg and showing canvas")
     document.getElementById('loading').style.display = 'none'
     document.getElementById('gameCanvas').style.display = 'block'
     firstStart()
