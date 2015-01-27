@@ -5,15 +5,15 @@ function setChainMovement(bGameRunning, bSceneGameVisible, chainMovement, direct
   if(bGameRunning === true && bSceneGameVisible === false) {
     oldMovement = chainMovement.current
     newMovement = null
-    console.log('one')
+    //console.log('one')
   } else if (chainMovement.current === null && chainMovement.previous === null) {
     newMovement = _.head(_.shuffle(directions))
-    console.log('two')
+    //console.log('two')
   } else if (chainMovement.current === null && chainMovement.previous !== null) {
     newMovement = chainMovement.previous
-    console.log('three')
+    //console.log('three')
   } else {
-    console.log('four')
+    //console.log('four')
   }
   return {current: newMovement, previous: oldMovement}
 }

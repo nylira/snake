@@ -10,8 +10,9 @@ var _ = require('lodash')
 var Combokeys = require('combokeys')
 var combokeys = new Combokeys(document)
 var Howl = require('howler').Howl
-var attachFastClick = require('fastclick');
-
+var attachFastClick = require('fastclick')
+var Hammer = require('hammerjs')
+var mc
 
 // helpers
 var Button = require('./helpers/Button')
@@ -24,7 +25,7 @@ var spawnRandomSprite = require('./helpers/spawnRandomSprite')
 var stayInBounds = require('./helpers/stayInBounds')
 var updateHighScores = require('./helpers/updateHighScores')
 var retinaLinkify = require('./helpers/retinaLinkify')
-var swipeEvent = require('./helpers/swipeEvent')
+//var swipeEvent = require('./helpers/swipeEvent')
 
 // window
 attachFastClick(document.body)
@@ -39,6 +40,7 @@ var GRID_UNIT = 16*R
 var DIRECTIONS = ['n','s','e','w']
 var REFRESH_RATE = 150//ms
 var GAME_RUNNING = false // used when a game is running
+var GAME_CANVAS
 
 // player variables
 var alarm = new Date().getTime() + REFRESH_RATE
@@ -114,7 +116,7 @@ function preload() {
 
   var assetLoader = new P.AssetLoader(ATextures)
   assetLoader.onComplete = function(){
-    console.log("assets loaded!")
+    //console.log("assets loaded!")
     document.getElementById('loading').style.display = 'none'
     firstStart()
   }
@@ -133,11 +135,21 @@ function preload() {
 }
 
 function setup() {
+  GAME_CANVAS = document.getElementById('gameCanvas')
+
+  // attach touch controls to canvas
+  mc = new Hammer(GAME_CANVAS)
+  //mc.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL })
+  mc.on("panleft panright tap press swipe", function(ev) {
+    console.log(ev.type +" gesture detected.")
+  })
+
   // setup stage
   stage = new P.Stage(0x141A1F)
-  renderer = P.autoDetectRenderer(CANVAS_X, CANVAS_Y)
-  document.getElementById('container').appendChild(renderer.view);
   stage.interactive = true // make it clickable
+
+  // setup renderer
+  renderer = P.autoDetectRenderer(CANVAS_X, CANVAS_Y, {view: GAME_CANVAS})
 
   sceneMenu = new P.DisplayObjectContainer()
   sceneGame = new P.DisplayObjectContainer()
@@ -410,6 +422,7 @@ function update(){
   // keep the game running if it isn't over
   requestAnimationFrame(update);
 
+
   // btnAgain
   if(sceneSummary.visible === true && GAME_RUNNING === false) {
     btnAgain.click = btnAgain.tap = function() {
@@ -454,16 +467,6 @@ function update(){
   if(sceneGame.visible === true && GAME_RUNNING === true) {
     // see if this works
     
-    sceneGame.touchstart = function() {
-      console.log("starting touch event on sceneGame...")
-    }
-    sceneGame.touchend = function() {
-      console.log("...ending touch event on sceneGame")
-    }
-    if(swipeEvent(sceneGame) !== undefined) {
-      console.log(swipeEvent(sceneGame))
-    }
-
     btnUp.tap = btnUp.click =
       function(){chainMovement.current = 'n'; sfxClickButtonTwo.play()}
     btnDown.tap = btnDown.click =
@@ -472,8 +475,6 @@ function update(){
       function(){chainMovement.current = 'e'; sfxClickButtonTwo.play()}
     btnLeft.tap = btnLeft.click =
       function(){chainMovement.current = 'w'; sfxClickButtonTwo.play()}
-
-  
 
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
@@ -578,3 +579,5 @@ function firstStart() {
 }
 
 preload()
+
+
