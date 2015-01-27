@@ -55,7 +55,7 @@ var chainMovement = {current: null, previous: null}
 var sfxPickup
   , sfxGameOver
   , sfxClickButton
-  , sfxClickButtonTwo
+  , sfxClickMovementButton
 
 // stage variables
 var stage, renderer
@@ -103,8 +103,8 @@ function preload() {
   , '../img/black16x16.png'
   , '../img/lightBlock16x16.png'
   , '../img/block16x16red.png'
-  , '../img/btn64x256.png'
-  , '../img/arrow256x256.png'
+  , '../img/btn64x256.jpg'
+  , '../img/btnArrow64x64.jpg'
   ]
   var ATexturesRetina = retinaLinkify(ATexturesDefault)
 
@@ -138,33 +138,6 @@ function preload() {
 function setup() {
   GAME_CANVAS = document.getElementById('gameCanvas')
 
-  // attach sipe controls to canvas
-  mc = new Hammer(GAME_CANVAS)
-  mc.get('swipe').set({
-    direction: Hammer.DIRECTION_ALL
-  , velocity: 0.35
-  , threshold: 5
-  })
-
-  mc.on("press swipe", function(ev) {
-    //console.log(ev.type +" event detected.")
-    //console.log(ev.direction +" swipe detected.")
-    switch(ev.direction) {
-      case 8:
-        chainMovement.current = 'n'
-        break
-      case 16:
-        chainMovement.current = 's'
-        break
-      case 4:
-        chainMovement.current = 'e'
-        break
-      case 2:
-        chainMovement.current = 'w'
-        break
-    }
-  })
-
   // setup stage
   stage = new P.Stage(0x141A1F)
   stage.interactive = true // make it clickable
@@ -195,7 +168,7 @@ function setup() {
     urls: ['../sfx/clickButton.wav']
   , volume: 0.5
   })
-  sfxClickButtonTwo = new Howl({
+  sfxClickMovementButton = new Howl({
     urls: ['../sfx/clickButton2.wav']
   , volume: 0.1
   })
@@ -207,16 +180,16 @@ function setup() {
     tileBlackTexture = P.Texture.fromImage('../img/black16x16.png')
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16@x2.png')
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
-    btnTexture = P.Texture.fromImage('../img/btn64x256@x2.png')
-    arrowTexture = P.Texture.fromImage('../img/arrow256x256@x2.png')
+    btnTexture = P.Texture.fromImage('../img/btn64x256@x2.jpg')
+    arrowTexture = P.Texture.fromImage('../img/btnArrow64x64@x2.jpg')
   } else {
     tileGridTexture = P.Texture.fromImage('../img/darkGrid16x16.png')
     tileGradientTexture = P.Texture.fromImage('../img/bg32x568.png')
     tileBlackTexture = P.Texture.fromImage('../img/black16x16.png')
     cubeTexture = P.Texture.fromImage('../img/lightBlock16x16.png')
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
-    btnTexture = P.Texture.fromImage('../img/btn64x256.png')
-    arrowTexture = P.Texture.fromImage('../img/arrow256x256.png')
+    btnTexture = P.Texture.fromImage('../img/btn64x256.jpg')
+    arrowTexture = P.Texture.fromImage('../img/btnArrow64x64.jpg')
   }
 
   // setup tiling textures
@@ -268,10 +241,41 @@ function initSceneMenu() {
 }
 
 function initSceneGame() {
+
+  // swipe bindings
+  mc = new Hammer(GAME_CANVAS)
+  mc.get('swipe').set({
+    direction: Hammer.DIRECTION_ALL
+  , velocity: 0.35
+  , threshold: 5
+  })
+
+  mc.on("press swipe", function(ev) {
+    //console.log(ev.type +" event detected.")
+    //console.log(ev.direction +" swipe detected.")
+    sfxClickMovementButton.play()
+    switch(ev.direction) {
+      case 8:
+        chainMovement.current = 'n'
+        break
+      case 16:
+        chainMovement.current = 's'
+        break
+      case 4:
+        chainMovement.current = 'e'
+        break
+      case 2:
+        chainMovement.current = 'w'
+        break
+    }
+  })
+
+
+  // navigation button location
   var navButtons = new P.DisplayObjectContainer()
-  navButtons.width = 62*2*R + 8*R
-  navButtons.height = 62*3*R + 16*R
-  navButtons.position.x = MAP_X + 62*R + 4*R + 18*R
+  navButtons.width = 64*2*R + 8*R
+  navButtons.height = 64*3*R + 16*R
+  navButtons.position.x = MAP_X + 64*R + 4*R + 16*R
   navButtons.position.y = 64*R
 
   // keybindings
@@ -280,23 +284,23 @@ function initSceneGame() {
   combokeys.bind(['right','d'], function() {chainMovement.current = 'e'})
   combokeys.bind(['left','a'], function() {chainMovement.current = 'w'})
 
-  btnUp.width = 62*R
-  btnUp.height = 62*R
+  btnUp.width = 64*R
+  btnUp.height = 64*R
   btnUp.position.y = 31*R
   btnUp.anchor = new P.Point(0.5, 0.5)
   btnUp.interactive = true
   btnUp.buttonMode = true
 
-  btnDown.width = 62*R
-  btnDown.height = 62*R
+  btnDown.width = 64*R
+  btnDown.height = 64*R
   btnDown.position.y = btnUp.position.y + btnUp.height*2 + 16*R
   btnDown.anchor = new P.Point(0.5, 0.5)
   btnDown.rotation = Math.PI
   btnDown.interactive = true
   btnDown.buttonMode = true
 
-  btnLeft.width = 62*R
-  btnLeft.height = 62*R
+  btnLeft.width = 64*R
+  btnLeft.height = 64*R
   btnLeft.position.x = btnUp.position.x - btnUp.width/2 - 4*R
   btnLeft.position.y = btnUp.position.y + btnUp.height + 8*R
   btnLeft.anchor = new P.Point(0.5, 0.5)
@@ -304,8 +308,8 @@ function initSceneGame() {
   btnLeft.interactive = true
   btnLeft.buttonMode = true
 
-  btnRight.width = 62*R
-  btnRight.height = 62*R
+  btnRight.width = 64*R
+  btnRight.height = 64*R
   btnRight.position.x = btnUp.position.x + btnUp.width/2 + 4*R
   btnRight.position.y = btnUp.position.y + btnUp.height + 8*R
   btnRight.anchor = new P.Point(0.5, 0.5)
@@ -360,7 +364,7 @@ function initSceneSummary() {
   sceneSummary.addChild(sceneSummaryRight)
   
   tileBlack.width = CANVAS_X*0.33
-  tileBlack.alpha = 0.15
+  tileBlack.alpha = 0.25
   sceneSummaryLeft.addChild(tileBlack)
 
   // high scores label
@@ -489,13 +493,13 @@ function update(){
     // see if this works
     
     btnUp.tap = btnUp.click =
-      function(){chainMovement.current = 'n'; sfxClickButtonTwo.play()}
+      function(){chainMovement.current = 'n'; sfxClickMovementButton.play()}
     btnDown.tap = btnDown.click =
-      function(){chainMovement.current = 's'; sfxClickButtonTwo.play()}
+      function(){chainMovement.current = 's'; sfxClickMovementButton.play()}
     btnRight.tap = btnRight.click =
-      function(){chainMovement.current = 'e'; sfxClickButtonTwo.play()}
+      function(){chainMovement.current = 'e'; sfxClickMovementButton.play()}
     btnLeft.tap = btnLeft.click =
-      function(){chainMovement.current = 'w'; sfxClickButtonTwo.play()}
+      function(){chainMovement.current = 'w'; sfxClickMovementButton.play()}
 
     // spawn a random cube if one doesn't exist
     if (randomCube === null) {
