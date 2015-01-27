@@ -116,8 +116,9 @@ function preload() {
 
   var assetLoader = new P.AssetLoader(ATextures)
   assetLoader.onComplete = function(){
-    //console.log("assets loaded!")
+    //console.log("assets loaded! hiding load msg and showing canvas")
     document.getElementById('loading').style.display = 'none'
+    document.getElementById('gameCanvas').style.display = 'block'
     firstStart()
   }
   assetLoader.load()
