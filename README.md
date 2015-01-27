@@ -8,7 +8,8 @@ The classic game Snake, ported to JavaScript.
 
 ## Play Locally
 
-  Launch `./pub/index.html` in your browser to play locally.
+    npm install
+    node server.js
 
 ## License
 
