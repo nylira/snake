@@ -137,11 +137,31 @@ function preload() {
 function setup() {
   GAME_CANVAS = document.getElementById('gameCanvas')
 
-  // attach touch controls to canvas
+  // attach sipe controls to canvas
   mc = new Hammer(GAME_CANVAS)
-  //mc.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL })
-  mc.on("panleft panright tap press swipe", function(ev) {
-    console.log(ev.type +" gesture detected.")
+  mc.get('swipe').set({
+    direction: Hammer.DIRECTION_ALL
+  , velocity: 0.35
+  , threshold: 5
+  })
+
+  mc.on("press swipe", function(ev) {
+    //console.log(ev.type +" event detected.")
+    //console.log(ev.direction +" swipe detected.")
+    switch(ev.direction) {
+      case 8:
+        chainMovement.current = 'n'
+        break
+      case 16:
+        chainMovement.current = 's'
+        break
+      case 4:
+        chainMovement.current = 'e'
+        break
+      case 2:
+        chainMovement.current = 'w'
+        break
+    }
   })
 
   // setup stage
