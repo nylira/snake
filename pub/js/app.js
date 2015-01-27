@@ -91,6 +91,7 @@ var ATextures
   , redTexture
   , btnTexture
   , arrowTexture
+  , bgSideTexture
 
 // this run no matter what scene is loaded
 function preload() {
@@ -105,6 +106,7 @@ function preload() {
   , '../img/block16x16red.png'
   , '../img/btn64x256.jpg'
   , '../img/btnArrow64x64.jpg'
+  , '../img/bgSide168x320.jpg'
   ]
   var ATexturesRetina = retinaLinkify(ATexturesDefault)
 
@@ -182,6 +184,7 @@ function setup() {
     redTexture = P.Texture.fromImage('../img/block16x16red@x2.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256@x2.jpg')
     arrowTexture = P.Texture.fromImage('../img/btnArrow64x64@x2.jpg')
+    bgSideTexture = P.Texture.fromImage('../img/bgSide168x320@x2.jpg')
   } else {
     tileGridTexture = P.Texture.fromImage('../img/darkGrid16x16.png')
     tileGradientTexture = P.Texture.fromImage('../img/bg32x568.png')
@@ -190,6 +193,7 @@ function setup() {
     redTexture = P.Texture.fromImage('../img/block16x16red.png')
     btnTexture = P.Texture.fromImage('../img/btn64x256.jpg')
     arrowTexture = P.Texture.fromImage('../img/btnArrow64x64.jpg')
+    bgSideTexture = P.Texture.fromImage('../img/bgSide168x320.jpg')
   }
 
   // setup tiling textures
@@ -270,6 +274,10 @@ function initSceneGame() {
     }
   })
 
+  var bgSideSprite = new P.Sprite(bgSideTexture)
+  bgSideSprite.position.x = MAP_X 
+  bgSideSprite.position.y = 0
+  sceneGame.addChild(bgSideSprite)
 
   // navigation button location
   var navButtons = new P.DisplayObjectContainer()
@@ -351,20 +359,21 @@ function initSceneSummary() {
   sceneSummary.addChild(tileGradient)
 
   sceneSummaryLeft = new P.DisplayObjectContainer()
-  sceneSummaryLeft.width = CANVAS_X * 0.33
+  sceneSummaryLeft.width = MAP_X
   sceneSummaryLeft.position.x = 0
   sceneSummaryLeft.position.y = 0
   sceneSummary.addChild(sceneSummaryLeft)
 
   sceneSummaryRight = new P.DisplayObjectContainer()
-  sceneSummaryRight.width = CANVAS_X * 0.67
-  sceneSummaryRight.position.x = CANVAS_X * 0.33
+  sceneSummaryRight.width = CANVAS_X - MAP_X
+  sceneSummaryRight.position.x = MAP_X
   sceneSummaryRight.position.y = 0
   sceneSummary.addChild(sceneSummaryRight)
   
-  tileBlack.width = CANVAS_X*0.33
-  tileBlack.alpha = 0.25
-  sceneSummaryLeft.addChild(tileBlack)
+  var bgSideSprite = new P.Sprite(bgSideTexture)
+  bgSideSprite.position.x = 0
+  bgSideSprite.position.y = 0
+  sceneSummaryRight.addChild(bgSideSprite)
 
   // high scores label
   var highScoresLabelTextStyle = {
@@ -374,10 +383,10 @@ function initSceneSummary() {
   , dropShadowColor: 'hsla(0,0%,0%,0.3)'
   , dropShadowDistance: 3*R
   }
-  var highScoresLabelText = new P.Text('Your High Scores', highScoresLabelTextStyle)
+  var highScoresLabelText = new P.Text('High Scores', highScoresLabelTextStyle)
   highScoresLabelText.position.x = (CANVAS_X*0.33 - highScoresLabelText.width)/2
   highScoresLabelText.position.y = 24*R
-  sceneSummaryLeft.addChild(highScoresLabelText)
+  sceneSummaryRight.addChild(highScoresLabelText)
 
   // high scores display
   var highScoresContainer = new P.DisplayObjectContainer()
@@ -407,7 +416,7 @@ function initSceneSummary() {
     scoreText.position.y = scoreTextY + scoreText.height * i
     highScoresContainer.addChild(scoreText)
   }
-  sceneSummaryLeft.addChild(highScoresContainer)
+  sceneSummaryRight.addChild(highScoresContainer)
 
   // game over title
   var gameOverTextStyle = {
@@ -420,7 +429,7 @@ function initSceneSummary() {
   var gameOverText = new P.Text('Game Over', gameOverTextStyle)
   gameOverText.position.x = (CANVAS_X*0.67 - gameOverText.width)/2
   gameOverText.position.y = 32*R
-  sceneSummaryRight.addChild(gameOverText)
+  sceneSummaryLeft.addChild(gameOverText)
 
   // points text
   var pointsTextStyle = {
@@ -434,13 +443,13 @@ function initSceneSummary() {
   var pointsText = new P.Text(pointsTextString, pointsTextStyle)
   pointsText.position.x = (CANVAS_X*0.67 - pointsText.width)/2
   pointsText.position.y = gameOverText.y + 64*R
-  sceneSummaryRight.addChild(pointsText)
+  sceneSummaryLeft.addChild(pointsText)
 
   // button
   btnAgain = new Button('Play Again', btnTexture)
   btnAgain.position.x = (CANVAS_X*0.67 - btnAgain.width)/2
   btnAgain.position.y = pointsText.position.y + 112*R
-  sceneSummaryRight.addChild(btnAgain)
+  sceneSummaryLeft.addChild(btnAgain)
 }
 
 function update(){
