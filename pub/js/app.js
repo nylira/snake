@@ -51,6 +51,10 @@ var snakeDb
 var highScores
 var chainMovement = {current: null, previous: null}
 
+// text
+var copyrightText
+  , copyrightTextStyle
+
 // sounds
 var sfxPickup
   , sfxGameOver
@@ -209,11 +213,31 @@ function setup() {
   btnLeft = new P.Sprite(arrowTexture)
   btnRight = new P.Sprite(arrowTexture)
   btnDown = new P.Sprite(arrowTexture)
+
+  // setup tag
+  copyrightTextStyle = {
+    font: 12*R + 'px "Helvetica Neue", Arial, Helvetica, sans-serif'
+  , fill: 'hsl(200,100%,50%)'
+  , dropShadow: false
+  }
+  
+  copyrightText = new P.Text('built by nylira.com', copyrightTextStyle)
+  copyrightText.position.x = R*6
+  copyrightText.position.y = CANVAS_Y - R*20
+  copyrightText.interactive = true
+  copyrightText.buttonMode = true
+  copyrightText.alpha = 0.75
+  copyrightText.mouseover = function() {copyrightText.alpha = 1.0}
+  copyrightText.mouseout = function() {copyrightText.alpha = 0.75}
+  copyrightText.click = copyrightText.tap = function() {
+    window.open('http://nylira.com', '_blank')
+  }
 }
 
 function initSceneMenu() {
   // background
   sceneMenu.addChild(tileGradient)
+  sceneMenu.addChild(copyrightText)
 
   // logo
   var logoTextStyle = {
@@ -361,6 +385,7 @@ function initSceneGame() {
 function initSceneSummary() {
   // background
   sceneSummary.addChild(tileGradient)
+  sceneSummary.addChild(copyrightText)
 
   sceneSummaryLeft = new P.DisplayObjectContainer()
   sceneSummaryLeft.width = MAP_X
