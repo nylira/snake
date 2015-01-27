@@ -257,20 +257,24 @@ function initSceneGame() {
   mc.on("press swipe", function(ev) {
     //console.log(ev.type +" event detected.")
     //console.log(ev.direction +" swipe detected.")
-    sfxClickMovementButton.play()
-    switch(ev.direction) {
-      case 8:
-        chainMovement.current = 'n'
-        break
-      case 16:
-        chainMovement.current = 's'
-        break
-      case 4:
-        chainMovement.current = 'e'
-        break
-      case 2:
-        chainMovement.current = 'w'
-        break
+
+    // if the game is playing cature swipes
+    if(sceneGame.visible === true) {
+      sfxClickMovementButton.play()
+      switch(ev.direction) {
+        case 8:
+          chainMovement.current = 'n'
+          break
+        case 16:
+          chainMovement.current = 's'
+          break
+        case 4:
+          chainMovement.current = 'e'
+          break
+        case 2:
+          chainMovement.current = 'w'
+          break
+      }
     }
   })
 
