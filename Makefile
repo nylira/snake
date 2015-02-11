@@ -5,6 +5,8 @@ nib = ./node_modules/nib/
 uglify = ./node_modules/uglify-js/bin/uglifyjs
 
 
+default: js css
+
 js:
 	 $(browserify) pub/js/app.js -d -o | $(uglify) > pub/js/bundle.js
 
@@ -17,5 +19,3 @@ css:
 
 wcss:
 	$(stylus) --watch --line-numbers src/styl/screen.styl -u $(nib) -o pub/css/
-
-all: js css
