@@ -10,7 +10,7 @@
     "hammerjs": "^2.0.4",
     "howler": "^1.1.25",
     "koa": "^0.17.0",
-    "koa-router": "^3.8.0",
+    "koa-router": "^4.0.1",
     "koa-static": "^1.4.9",
     "lodash": "^3.1.0",
     "nib": "^1.1.0",
