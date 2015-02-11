@@ -31,7 +31,7 @@ var retinaLinkify = require('./helpers/retinaLinkify')
 attachFastClick(document.body)
 
 // constants
-var R = window.devicePixelRatio
+var R = 2
 var MAP_X = 400*R
 var MAP_Y = 320*R
 var CANVAS_X = 568*R
